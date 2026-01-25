@@ -1,0 +1,8 @@
+name: "Debt"
+description: "Pay off your debts."
+settings: "Settings"
+
+debugName: "Debug Mode"
+
+interestName: "Interest"
+interestDescription: "Interest rate, per in-game week."
