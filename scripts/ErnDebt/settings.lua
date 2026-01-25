@@ -49,6 +49,12 @@ local function init()
                     max = 1000,
                 }
             },
+            {
+                key = "debug",
+                name = "debugName",
+                default = false,
+                renderer = "checkbox",
+            },
         }
     }
 end
