@@ -16,9 +16,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
--- This file is in charge of tracking and exposing path information.
--- Interact with it via the interface it exposes.
-
 local MOD_NAME       = require("scripts.ErnDebt.ns")
 local interfaces     = require("openmw.interfaces")
 local pself          = require("openmw.self")
@@ -59,7 +56,15 @@ local function onInactive()
     })
 end
 
+local function onEquip(data)
+    pself.type.setEquipment(pself, data)
+end
+
+
 return {
+    eventHandlers = {
+        [MOD_NAME .. "onEquip"] = onEquip,
+    },
     engineHandlers = {
         onInit = onInit,
         onLoad = onLoad,
