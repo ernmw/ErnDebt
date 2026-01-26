@@ -20,13 +20,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -- Interact with it via the interface it exposes.
 
 local MOD_NAME        = require("scripts.ErnDebt.ns")
-local types           = require('openmw.types')
 local core            = require('openmw.core')
 local pself           = require("openmw.self")
-local interfaces      = require("openmw.interfaces")
 local settings        = require("scripts.ErnDebt.settings")
 local async           = require("openmw.async")
-local nearby          = require('openmw.nearby')
 
 local persist         = {
     currentDebt = 5000,
@@ -63,19 +60,23 @@ local function spawn()
 end
 
 local function maybeSpawn()
-    if persist.lastSpawnTime + oneWeekDuration > core.getGameTime() then
+    if persist.currentDebt <= 0 then
+        return
+    end
+
+    if persist.lastSpawnTime + (oneWeekDuration / 2) > core.getGameTime() then
         return
     end
     -- chance to not spawn the collector goes down the more you skip payments.
     local daysLate = math.ceil((core.getGameTime() - persist.lastSpawnTime - oneWeekDuration) / (24 * 60 * 60))
-    local dieSize = math.min(10, 1 + daysLate + persist.currentPaymentSkipStreak)
+    local chance = math.max(5, 5 * daysLate + 3 * persist.currentPaymentSkipStreak)
     if settingCache.debug then
         print("Days late: " ..
             tostring(daysLate) ..
-            ". Skip streak: " .. tostring(persist.currentPaymentSkipStreak) ". Spawn chance is 1 in " ..
-            tostring(dieSize) .. ".")
+            ". Skip streak: " .. tostring(persist.currentPaymentSkipStreak) .. ". Spawn chance is " ..
+            tostring(chance) .. "%.")
     end
-    if math.random(0, dieSize) == 0 then
+    if math.random(0, 100) < chance then
         spawn()
     end
 end

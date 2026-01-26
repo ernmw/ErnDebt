@@ -2,3 +2,4 @@ MENU: scripts/ErnDebt/menu_settings.lua
 
 PLAYER: scripts/ErnDebt/player.lua
 GLOBAL: scripts/ErnDebt/global.lua
+CUSTOM: scripts/ErnDebt/debtcollector.lua

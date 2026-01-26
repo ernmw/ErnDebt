@@ -19,56 +19,36 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -- This file is in charge of tracking and exposing path information.
 -- Interact with it via the interface it exposes.
 
-local MOD_NAME = require("scripts.ErnDebt.ns")
+local MOD_NAME  = require("scripts.ErnDebt.ns")
+local world     = require('openmw.world')
+local util      = require("openmw.util")
 
-if require("openmw.core").API_REVISION < 111 then
-    error("OpenMW 0.51 or newer is required!")
-    return
+local spawnDist = 1000
+
+local function newDebtCollector(data, recordId)
+    -- make the npc
+    local new = world.createObject(recordId, 1)
+    new:addScript("scripts\\ErnDebt\\debtcollector.lua", data)
+    -- move it behind the player
+    local backward = data.player.rotation:apply(util.vector3(0.0, -1.0, 0.0)):normalize()
+    local location = data.player.position + backward * spawnDist + util.vector3(0.0, 0.0, spawnDist)
+    print("Spawning new debt collector " .. recordId .. " at " .. tostring(location) .. ".")
+    new:teleport(data.player.cell,
+        location,
+        { onGround = true })
 end
 
-local function getBaseBarterGold(npc)
-    return npc.type.records[npc.recordId].baseGold
+local function onCollectorSpawn(data)
+    local player = data.player
+    local currentDebt = data.currentDebt
+    local currentPaymentSkipStreak = data.currentPaymentSkipStreak
+
+    newDebtCollector(data, "fargoth")
 end
 
-local function limitGold(data)
-    local currentGold = data.npc.type.getBarterGold(data.npc)
-
-    -- save off original amount before we start messing with it.
-    local originalGold = getBaseBarterGold(data.npc)
-
-    if not originalGold then
-        return
-    end
-
-    local newMax = 0
-    if data.additionalOnlyGold then
-        newMax = data.maxGold + originalGold
-    else
-        newMax = math.min(originalGold, data.maxGold)
-    end
-
-    if currentGold > newMax then
-        print(data.npc.recordId .. "- current: " ..
-            tostring(currentGold) ..
-            ", original: " .. tostring(originalGold) .. ", max: " .. tostring(newMax))
-        data.npc.type.setBarterGold(data.npc, newMax)
-        -- notify player to re-open window
-        data.player:sendEvent(MOD_NAME .. "onReOpenBarterWindow", {
-            target = data.npc,
-        })
-    end
-end
-
-local function onBarterStart(data)
-    if not data.npc then
-        print("no npc in data")
-        return
-    end
-    limitGold(data)
-end
 
 return {
     eventHandlers = {
-        [MOD_NAME .. "onBarterStart"] = onBarterStart,
+        [MOD_NAME .. "onCollectorSpawn"] = onCollectorSpawn,
     },
 }
