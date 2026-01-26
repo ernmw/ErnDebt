@@ -20,12 +20,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -- Interact with it via the interface it exposes.
 
 local MOD_NAME  = require("scripts.ErnDebt.ns")
+local mwvars    = require("scripts.ErnDebt.mwvars")
 local world     = require('openmw.world')
 local util      = require("openmw.util")
 
-local spawnDist = 1000
+local persist   = {}
+
+-- can't spawn too far, because the actor won't notice the player.
+local spawnDist = 500
 
 local function newDebtCollector(data, recordId)
+    -- update mw vars from lua.
+    world.mwscript.getGlobalVariables(data.player)[mwvars.erncurrentdebt] = data.currentDebt
+    world.mwscript.getGlobalVariables(data.player)[mwvars.erncollectorskilled] = data.collectorsKilled
+    world.mwscript.getGlobalVariables(data.player)[mwvars.erncurrentpaymentskipstreak] = data.currentPaymentSkipStreak
+
     -- make the npc
     local new = world.createObject(recordId, 1)
     new:addScript("scripts\\ErnDebt\\debtcollector.lua", data)
@@ -35,7 +44,9 @@ local function newDebtCollector(data, recordId)
     print("Spawning new debt collector " .. recordId .. " at " .. tostring(location) .. ".")
     new:teleport(data.player.cell,
         location,
-        { onGround = true })
+        {
+            onGround = true,
+        })
 end
 
 local function onCollectorSpawn(data)
@@ -46,9 +57,18 @@ local function onCollectorSpawn(data)
     newDebtCollector(data, "fargoth")
 end
 
+local function onCollectorDespawn(data)
+    -- remove the collector
+    data.npc.enabled = false
+    data.npc:remove()
+    -- pass through if we paid some debt. mwscript must set this value.
+    data.justPaidAmount = world.mwscript.getGlobalVariables(data.player)[mwvars.ernjustpaidamount]
+    data.data.player.sendEvent(MOD_NAME .. "onCollectorDespawn", data)
+end
 
 return {
     eventHandlers = {
         [MOD_NAME .. "onCollectorSpawn"] = onCollectorSpawn,
+        [MOD_NAME .. "onCollectorDespawn"] = onCollectorDespawn,
     },
 }

@@ -22,6 +22,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 local MOD_NAME       = require("scripts.ErnDebt.ns")
 local interfaces     = require("openmw.interfaces")
 local pself          = require("openmw.self")
+local util           = require('openmw.util')
+local core           = require('openmw.core')
 
 local collectionData = {}
 
@@ -44,16 +46,25 @@ local function onActive()
     print("Debt collector " .. pself.recordId .. " is active.")
     interfaces.AI.startPackage({
         type = "Follow",
-        cancelOther = true,
         target = collectionData.player,
+        isRepeat = false,
+    })
+end
+
+local function onInactive()
+    core.sendGlobalEvent(MOD_NAME .. "onCollectorDespawn", {
+        player = collectionData.player,
+        npc = pself,
+        dead = pself.type.isDead(pself)
     })
 end
 
 return {
-    eventHandlers = {
+    engineHandlers = {
         onInit = onInit,
         onLoad = onLoad,
         onSave = onSave,
         onActive = onActive,
+        onInactive = onInactive,
     },
 }

@@ -26,8 +26,10 @@ local settings        = require("scripts.ErnDebt.settings")
 local async           = require("openmw.async")
 
 local persist         = {
+    justSpawned = false,
     currentDebt = 5000,
     currentPaymentSkipStreak = 0,
+    collectorsKilled = 0,
     lastSpawnTime = core.getGameTime(),
 }
 
@@ -52,15 +54,20 @@ local function spawn()
     end
     persist.currentDebt = newDebt
     persist.lastSpawnTime = core.getGameTime()
+    persist.currentPaymentSkipStreak = persist.currentPaymentSkipStreak + 1
     core.sendGlobalEvent(MOD_NAME .. "onCollectorSpawn", {
         player = pself,
         currentDebt = persist.currentDebt,
         currentPaymentSkipStreak = persist.currentPaymentSkipStreak,
+        collectorsKilled = persist.collectorsKilled,
     })
 end
 
 local function maybeSpawn()
     if persist.currentDebt <= 0 then
+        return
+    end
+    if persist.justSpawned then
         return
     end
 
@@ -87,6 +94,27 @@ local function UiModeChanged(data)
     end
 end
 
+local function onCollectorDespawn(data)
+    persist.justSpawned = false
+    if data.dead then
+        if settingCache.debug then
+            print("Collector killed.")
+        end
+        persist.collectorsKilled = persist.collectorsKilled + 1
+    end
+    if data.justPaidAmount <= 0 then
+        if settingCache.debug then
+            print("Payment skipped.")
+        end
+    else
+        if settingCache.debug then
+            print("Paid " .. tostring(data.justPaidAmount) .. ".")
+        end
+        persist.currentPaymentSkipStreak = 0
+        persist.currentDebt = persist.currentDebt - data.justPaidAmount
+    end
+end
+
 local function onLoad(data)
     if data then
         persist = data
@@ -98,7 +126,10 @@ end
 
 return {
     eventHandlers = {
+        [MOD_NAME .. "onCollectorDespawn"] = onCollectorDespawn,
         UiModeChanged = UiModeChanged,
+    },
+    engineHandlers = {
         onLoad = onLoad,
         onSave = onSave,
     },

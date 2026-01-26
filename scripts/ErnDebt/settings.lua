@@ -41,7 +41,7 @@ local function init()
                 key = "interest",
                 name = "interestName",
                 description = "interestDescription",
-                default = 0.05,
+                default = 0.01,
                 renderer = "number",
                 argument = {
                     integer = false,
