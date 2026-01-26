@@ -21,7 +21,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 local MOD_NAME  = require("scripts.ErnDebt.ns")
 local mwvars    = require("scripts.ErnDebt.mwvars")
-local world     = require('openmw.world')
+local gearup    = require("scripts.ErnDebt.gearup")
+local world     = require("openmw.world")
+local types     = require("openmw.types")
 local util      = require("openmw.util")
 
 local persist   = {}
@@ -47,6 +49,9 @@ local function newDebtCollector(data, recordId)
         {
             onGround = true,
         })
+
+    local pcLevel = types.Actor.stats.level(data.player).current
+    gearup.gearupNPC(new, pcLevel + data.collectorsKilled)
 end
 
 local function onCollectorSpawn(data)

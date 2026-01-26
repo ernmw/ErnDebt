@@ -16,60 +16,85 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
-local types       = require('openmw.types')
-local aux_util    = require('openmw_aux.util')
-local world       = require("openmw.world")
-local MOD_NAME    = require("scripts.ErnDebt.ns")
+local types        = require('openmw.types')
+local aux_util     = require('openmw_aux.util')
+local world        = require("openmw.world")
+local MOD_NAME     = require("scripts.ErnDebt.ns")
 
-local SLOT        = types.Actor.EQUIPMENT_SLOT
+local SLOT         = types.Actor.EQUIPMENT_SLOT
 
-local gearByLevel = {
-    [1] = {
+-- https://en.uesp.net/wiki/Tamriel_Data:Armor
+--https://en.uesp.net/wiki/Tamriel_Data:Clothing
+
+local commonPants  = { "common_pants_01", "common_pants_02", "common_pants_03", "common_pants_04", "common_pants_05",
+    "T_Com_Cm_Pants_01",
+    "T_Com_Cm_Pants_02",
+    "T_Com_Cm_Pants_03",
+    "T_Com_Cm_Pants_04",
+    "T_Imp_Cm_PantsColNorth_01",
+    "T_Imp_Cm_PantsColNorth_02",
+    "T_Imp_Cm_PantsColNorth_03",
+    "T_Imp_Cm_PantsColWest_06",
+    "T_Imp_Cm_PantsNavy_01",
+    "T_Rga_Cm_Pants_01" }
+local commonShirts = { "common_shirt_01", "common_shirt_02", "common_shirt_03", "common_shirt_04", "common_shirt_05",
+    "T_Com_Cm_Shirt_03", "T_Com_Cm_Shirt_04" }
+
+
+-- a random package is chosen, provided it meets the requirements.
+local gearPackages = {
+    {
+        level = 1,
         equipment = {
-            [SLOT.Helmet] = { "bonemold_helm" },
-            [SLOT.Cuirass] = { "netch_leather_boiled_cuirass" },
-            [SLOT.CarriedRight] = { "chitin club", "chitin war axe", "chitin dagger", "iron saber" },
-            [SLOT.Shirt] = { "common_shirt_01", "common_shirt_02", "common_shirt_03", "common_shirt_04", "common_shirt_05" },
-            [SLOT.Pants] = { "common_pants_01", "common_pants_02", "common_pants_03", "common_pants_04", "common_pants_05" },
-            [SLOT.LeftGauntlet] = { "cloth bracer left" },
-            [SLOT.RightGauntlet] = { "cloth bracer right" },
-            [SLOT.Boots] = { "netch_leather_boots" },
+            [SLOT.Helmet] = { "bonemold_helm", "T_De_Bonemold_HelmOpen_01" },
+            [SLOT.Cuirass] = {
+                "netch_leather_boiled_cuirass",
+                "T_De_Netch_Cuirass_01",
+                "T_De_Netch_Cuirass_02",
+                "T_De_Netch_Cuirass_03" },
+            [SLOT.CarriedRight] = { "chitin club", "chitin war axe", "chitin dagger", "iron saber", "T_Com_Farm_Hatchet_01" },
+            [SLOT.CarriedLeft] = { "chitin_shield", "netch_leather_shield" },
+            [SLOT.Shirt] = commonShirts,
+            [SLOT.Pants] = commonPants,
+            [SLOT.LeftGauntlet] = { "common_glove_left_01" },
+            [SLOT.RightGauntlet] = { "common_glove_right_01" },
+            [SLOT.Boots] = {
+                "netch_leather_boots",
+                "T_Imp_Cm_BootsCol_01",
+                "T_Imp_Cm_BootsCol_02",
+                "T_Imp_Cm_BootsCol_03",
+                "T_Imp_Cm_BootsCol_04" },
         },
-        extra = { "p_recall_s" },
+        extra = { "p_recall_s", "Potion_Local_Brew_01" },
     },
-    [2] = {
+    {
+        level = 3,
         equipment = {
-            [SLOT.Helmet] = { "chitin_mask_helm" },
+            [SLOT.LeftPauldron] = { "T_De_Chitin_PauldrL_01" },
+            [SLOT.RightPauldron] = { "T_De_Chitin_PauldrR_01" },
+            [SLOT.Helmet] = { "chitin_mask_helm", "T_Com_Iron_Helm_01" },
             [SLOT.Cuirass] = { "nordic_ringmail_cuirass" },
-            [SLOT.Greaves] = { "netch_leather_greaves" },
-            [SLOT.CarriedRight] = { "spiked club", "iron war axe", "iron dagger", "iron broadsword" },
+            [SLOT.Greaves] = { "netch_leather_greaves", "T_Imp_StuddedLeather_Greaves_01" },
+            [SLOT.CarriedRight] = { "iron battle axe", "iron warhammer", "iron claymore", "iron halberd", "T_Com_Iron_Longhammer_01", "T_Com_Iron_Daikatana_01" },
+            [SLOT.Shirt] = commonShirts,
+            [SLOT.Pants] = commonPants,
             [SLOT.LeftGauntlet] = { "iron_gauntlet_left" },
             [SLOT.RightGauntlet] = { "iron_gauntlet_right" },
-            [SLOT.Boots] = { "chitin boots" },
+            [SLOT.Boots] = { "chitin boots", "T_De_Guarskin_Boots_01" },
         },
-        extra = { "p_fortify_fatigue_s" },
+        extra = { "p_fortify_fatigue_s", "p_fortify_health_s" },
     },
 }
 
-local function mergeGear(pcLevel)
-    local merged = { equipment = {}, extra = {} }
-    for gearLevel, gearGroup in pairs(gearByLevel) do
-        if gearLevel <= pcLevel then
-            for slot, items in pairs(gearGroup.equipment) do
-                if not merged.equipment[slot] then
-                    merged.equipment[slot] = {}
-                end
-                for _, item in pairs(items) do
-                    table.insert(merged.equipment[slot], item)
-                end
-            end
-            for _, item in pairs(gearGroup.extra) do
-                table.insert(merged.extra, item)
-            end
+local function selectGearPackage(pcLevel)
+    local allowed = {}
+    for _, package in pairs(gearPackages) do
+        if package.level <= pcLevel then
+            table.insert(allowed, package)
         end
     end
-    print("merged gear table: " .. aux_util.deepToString(merged, 4))
-    return merged
+    local idx = math.random(1, #allowed)
+    return allowed[idx]
 end
 
 local function selectRecordFromList(recordList)
@@ -84,23 +109,33 @@ local function selectRecordFromList(recordList)
         table.remove(recordList, idx)
         return selectRecordFromList(recordList)
     end
+    return recordId
 end
 
 local function gearupNPC(npc, pcLevel)
     local inventory = npc.type.inventory(npc)
-    local gearTable = mergeGear(pcLevel)
+    local gearTable = selectGearPackage(pcLevel)
     local toEquip = {}
-    -- now select entries from the table
-    for slot, itemList in gearTable.equipment do
+    -- now select entries from the table and send to the npc.
+    for slot, itemList in pairs(gearTable.equipment) do
         local itemRecordId = selectRecordFromList(itemList)
         if itemRecordId then
             local equipmentObject = world.createObject(itemRecordId)
             equipmentObject:moveInto(inventory)
             toEquip[slot] = equipmentObject
+        else
+            print("nothing for slot" .. tostring(slot))
         end
     end
+    print("equip table: " .. aux_util.deepToString(toEquip, 4))
+    npc:sendEvent(MOD_NAME .. "onEquip", toEquip)
 
-    npc.sendEvent(MOD_NAME .. "onEquip", toEquip)
+    -- insert some extra stuff
+    local itemRecordId = selectRecordFromList(gearTable.extra)
+    if itemRecordId then
+        local equipmentObject = world.createObject(itemRecordId)
+        equipmentObject:moveInto(inventory)
+    end
 end
 
 return {
