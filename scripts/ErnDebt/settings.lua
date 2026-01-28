@@ -46,7 +46,7 @@ local function init()
                 argument = {
                     integer = false,
                     min = 0,
-                    max = 1000,
+                    max = 10,
                 }
             },
             {

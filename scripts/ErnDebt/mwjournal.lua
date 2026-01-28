@@ -17,13 +17,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
 return {
-    quest = "ern_debt",
-    questStates = {
+    questId = "ern_debt",
+    questStages = {
         [0] = "name",
         [1] = "start",
         [5] = "approached",
         [10] = "killed_collector",
+        -- 100 and over MUST be finished stages.
         [100] = "paid_off",
         [101] = "killed_lender"
     },
+    ---@param stage number
+    ---@return boolean
+    enabled = function(stage)
+        return stage > 0 and stage < 100
+    end
 }

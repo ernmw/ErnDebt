@@ -5,4 +5,6 @@ settings: "Settings"
 debugName: "Debug Mode"
 
 interestName: "Interest"
-interestDescription: "Interest rate, per in-game week."
+interestDescription: "Interest rate, per in-game week. .01 is 1%."
+
+beingWatchedMessage: "You feel as though you're being watched."

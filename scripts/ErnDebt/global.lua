@@ -19,17 +19,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -- This file is in charge of tracking and exposing path information.
 -- Interact with it via the interface it exposes.
 
-local MOD_NAME  = require("scripts.ErnDebt.ns")
-local mwvars    = require("scripts.ErnDebt.mwvars")
-local gearup    = require("scripts.ErnDebt.gearup")
-local world     = require("openmw.world")
-local types     = require("openmw.types")
-local util      = require("openmw.util")
+local MOD_NAME        = require("scripts.ErnDebt.ns")
+local mwvars          = require("scripts.ErnDebt.mwvars")
+local gearup          = require("scripts.ErnDebt.gearup")
+local world           = require("openmw.world")
+local types           = require("openmw.types")
+local util            = require("openmw.util")
 
-local persist   = {}
-
--- can't spawn too far, because the actor won't notice the player.
-local spawnDist = 500
+local collectorScript = "scripts\\ErnDebt\\debtcollector.lua"
 
 local function newDebtCollector(data, recordId)
     -- update mw vars from lua.
@@ -39,13 +36,12 @@ local function newDebtCollector(data, recordId)
 
     -- make the npc
     local new = world.createObject(recordId, 1)
-    new:addScript("scripts\\ErnDebt\\debtcollector.lua", data)
+    new:addScript(collectorScript, data)
     -- move it behind the player
-    local backward = data.player.rotation:apply(util.vector3(0.0, -1.0, 0.0)):normalize()
-    local location = data.player.position + backward * spawnDist + util.vector3(0.0, 0.0, spawnDist)
-    print("Spawning new debt collector " .. recordId .. " at " .. tostring(location) .. ".")
-    new:teleport(data.player.cell,
-        location,
+
+    print("Spawning new debt collector " .. recordId .. " at " .. data.cellId .. ": " .. tostring(data.position) .. ".")
+    new:teleport(world.getCellById(data.cellId),
+        util.vector3(data.position.x, data.position.y, data.position.z),
         {
             onGround = true,
         })
@@ -63,12 +59,36 @@ local function onCollectorSpawn(data)
 end
 
 local function onCollectorDespawn(data)
-    -- remove the collector
-    data.npc.enabled = false
-    data.npc:remove()
+    data.npc:removeScript(collectorScript)
+    if not data.dead then
+        -- remove the collector if not dead
+        data.npc.enabled = false
+        data.npc:remove()
+    end
     -- pass through if we paid some debt. mwscript must set this value.
     data.justPaidAmount = world.mwscript.getGlobalVariables(data.player)[mwvars.ernjustpaidamount]
-    data.data.player.sendEvent(MOD_NAME .. "onCollectorDespawn", data)
+    data.player:sendEvent(MOD_NAME .. "onCollectorDespawn", data)
+end
+
+local function onActivate(object, actor)
+    if not types.Player.objectIsInstance(actor) then
+        return
+    end
+    if not types.Door.objectIsInstance(object) then
+        return
+    end
+    if not types.Door.isTeleport(object) then
+        return
+    end
+    if types.Lockable.isLocked(object) then
+        return
+    end
+    local destCell = types.Door.destCell(object)
+    if (destCell ~= nil) and
+        (destCell.isExterior or destCell:hasTag("QuasiExterior")) then
+        -- The player is leaving an internal cell and entering an exterior cell.
+        actor:sendEvent(MOD_NAME .. "onExitingInterior", { door = object })
+    end
 end
 
 return {
@@ -76,4 +96,7 @@ return {
         [MOD_NAME .. "onCollectorSpawn"] = onCollectorSpawn,
         [MOD_NAME .. "onCollectorDespawn"] = onCollectorDespawn,
     },
+    engineHandlers = {
+        onActivate = onActivate
+    }
 }

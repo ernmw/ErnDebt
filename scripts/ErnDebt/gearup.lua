@@ -20,7 +20,6 @@ local types        = require('openmw.types')
 local aux_util     = require('openmw_aux.util')
 local world        = require("openmw.world")
 local MOD_NAME     = require("scripts.ErnDebt.ns")
-
 local SLOT         = types.Actor.EQUIPMENT_SLOT
 
 -- https://en.uesp.net/wiki/Tamriel_Data:Armor
@@ -33,7 +32,8 @@ local commonPants  = { "common_pants_01", "common_pants_02", "common_pants_03", 
     "T_Com_Cm_Pants_04" }
 local commonShirts = { "common_shirt_01", "common_shirt_02", "common_shirt_03", "common_shirt_04", "common_shirt_05",
     "T_Com_Cm_Shirt_03", "T_Com_Cm_Shirt_04" }
-
+local cheapExtras  = { "Potion_Local_Brew_01", "p_restore_health_b", "p_fortify_fatigue_s", "p_fortify_health_s",
+    "potion_comberry_wine_01", "p_magicka_resistance_b", "p_lightning shield_s", "p_fire_shield_s", "p_frost_shield_s" }
 
 -- a random package is chosen, provided it meets the requirements.
 -- at least one element in each primitive list must be in the base game.
@@ -61,7 +61,8 @@ local gearPackages = {
                 "T_Imp_Cm_BootsCol_03",
                 "T_Imp_Cm_BootsCol_04" },
         },
-        extra = { { "Potion_Local_Brew_01" }, { "p_restore_health_b" } },
+        extra = cheapExtras,
+        spells = { { "noise", "hearth heal" }, { "restore strength", "stamina" } },
     },
     {
         name = "2h grunt",
@@ -79,7 +80,8 @@ local gearPackages = {
             [SLOT.RightGauntlet] = { "iron_gauntlet_right" },
             [SLOT.Boots] = { "chitin boots", "T_De_Guarskin_Boots_01" },
         },
-        extra = { { "p_fortify_fatigue_s" }, { "p_fortify_health_s" }, { "potion_comberry_wine_01" } },
+        extra = cheapExtras,
+        spells = { { "wearying touch", "weakness" }, {} },
     },
     {
         name = "ranged grunt",
@@ -97,7 +99,8 @@ local gearPackages = {
                 "netch_leather_boots",
                 "chitin boots" },
         },
-        extra = { { "p_magicka_resistance_b" }, { "p_lightning shield_c" } },
+        extra = cheapExtras,
+        spells = { { "bound dagger", "summon scamp" }, { "shockball", "flamebolt", "frost bolt" }, },
     },
 }
 
@@ -112,17 +115,26 @@ local function selectGearPackage(pcLevel)
     return allowed[idx]
 end
 
-local function selectRecordFromList(recordList)
+local function equipmentValidator(recordId)
+    return (types.Armor.records[recordId] or types.Clothing.records[recordId] or types.Weapon.records[recordId]) ~= nil
+end
+
+local function extrasValidator(recordId)
+    return (types.Potion.records[recordId]) ~= nil
+end
+
+---@param recordList string[]
+---@param validator fun(a : string): boolean
+---@return nil
+local function selectRecordFromList(recordList, validator)
     if #recordList == 0 then
         return nil
     end
     local idx = math.random(1, #recordList)
     local recordId = recordList[idx]
-    local valid = types.Armor.records[recordId] or types.Potion.records[recordId] or types.Clothing.records[recordId] or
-        types.Weapon.records[recordId]
-    if not valid then
+    if not validator(recordId) then
         table.remove(recordList, idx)
-        return selectRecordFromList(recordList)
+        return selectRecordFromList(recordList, validator)
     end
     return recordId
 end
@@ -133,7 +145,7 @@ local function gearupNPC(npc, pcLevel)
     local toEquip = {}
     -- now select entries from the table and send to the npc.
     for slot, itemList in pairs(gearTable.equipment) do
-        local itemRecordId = selectRecordFromList(itemList)
+        local itemRecordId = selectRecordFromList(itemList, equipmentValidator)
         if itemRecordId then
             local count = slot == SLOT.Ammunition and math.random(10, 20) or 1
             local equipmentObject = world.createObject(itemRecordId, count)
@@ -146,12 +158,19 @@ local function gearupNPC(npc, pcLevel)
     print("equip table: " .. aux_util.deepToString(toEquip, 4))
     npc:sendEvent(MOD_NAME .. "onEquip", toEquip)
 
-    -- insert some extra stuff
-    local extraList = gearTable.extra[math.random(1, #gearTable.extra)]
-    local itemRecordId = selectRecordFromList(extraList)
+    -- insert an extra thing
+    local itemRecordId = selectRecordFromList(gearTable.extra, extrasValidator)
     if itemRecordId then
         local equipmentObject = world.createObject(itemRecordId)
         equipmentObject:moveInto(inventory)
+    end
+
+    -- add spells
+    if #gearTable.spells > 0 then
+        local spellGroupIdx = math.random(1, #gearTable.spells)
+        for _, spellId in pairs(gearTable.spells[spellGroupIdx]) do
+            npc.type.spells(npc):add(spellId)
+        end
     end
 end
 
