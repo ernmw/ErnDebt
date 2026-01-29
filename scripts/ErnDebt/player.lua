@@ -31,7 +31,7 @@ local types           = require('openmw.types')
 local localization    = core.l10n(MOD_NAME)
 
 -- can't spawn too far, because the actor won't notice the player.
-local spawnDist       = 500
+local spawnDist       = 1000
 
 local persist         = {
     justSpawned = false,
@@ -92,12 +92,15 @@ local function shouldSpawn()
         return false
     end
 
-    if persist.lastSpawnTime + (oneWeekDuration / 2) > core.getGameTime() then
+    if (not settingCache.debug) and persist.lastSpawnTime + (oneWeekDuration / 2) > core.getGameTime() then
         return false
     end
     -- chance to not spawn the collector goes down the more you skip payments.
     local daysLate = math.ceil((core.getGameTime() - persist.lastSpawnTime - oneWeekDuration) / (24 * 60 * 60))
     local chance = math.max(5, 5 * daysLate + 3 * persist.currentPaymentSkipStreak)
+    if settingCache.debug then
+        chance = 50
+    end
     log("Days late: " ..
         tostring(daysLate) ..
         ". Skip streak: " .. tostring(persist.currentPaymentSkipStreak) .. ". Spawn chance is " ..
@@ -147,7 +150,8 @@ end
 local function onQuestUpdate(questId, stage)
     if questId == mwjournal.questId then
         persist.enabled = mwjournal.enabled(stage)
-        log("quest stage change: " .. tostring(mwjournal.questStages[stage]) .. ", enabled: " .. persist.enabled)
+        log("quest stage change: " ..
+            tostring(mwjournal.questStages[stage]) .. ", enabled: " .. tostring(persist.enabled))
     end
 end
 

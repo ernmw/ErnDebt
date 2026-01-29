@@ -47,7 +47,7 @@ local function newDebtCollector(data, recordId)
         })
 
     local pcLevel = types.Actor.stats.level(data.player).current
-    gearup.gearupNPC(new, pcLevel + data.collectorsKilled)
+    gearup.gearupNPCs({ new }, pcLevel + data.collectorsKilled)
 end
 
 local function onCollectorSpawn(data)
@@ -55,7 +55,7 @@ local function onCollectorSpawn(data)
     local currentDebt = data.currentDebt
     local currentPaymentSkipStreak = data.currentPaymentSkipStreak
 
-    newDebtCollector(data, "fargoth")
+    newDebtCollector(data, "tolvise othralen")
 end
 
 local function onCollectorDespawn(data)

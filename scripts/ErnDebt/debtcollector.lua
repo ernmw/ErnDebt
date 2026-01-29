@@ -21,6 +21,7 @@ local interfaces     = require("openmw.interfaces")
 local pself          = require("openmw.self")
 local util           = require('openmw.util')
 local core           = require('openmw.core')
+local aux_util       = require('openmw_aux.util')
 
 local collectionData = {}
 
@@ -41,11 +42,12 @@ end
 
 local function onActive()
     print("Debt collector " .. pself.recordId .. " is active.")
-    interfaces.AI.startPackage({
-        type = "Follow",
-        target = collectionData.player,
-        isRepeat = false,
-    })
+    -- Adjust dispo and fight
+    pself.type.stats.ai.fight(pself).base = 70
+    local startDisposition = pself.type.getBaseDisposition(pself, collectionData.player)
+    pself.type.modifyBaseDisposition(pself, collectionData.player, 30 - startDisposition)
+    -- Remove AI so we have full control
+    interfaces.AI.removePackages()
 end
 
 local function onInactive()
@@ -60,6 +62,51 @@ local function onEquip(data)
     pself.type.setEquipment(pself, data)
 end
 
+local delay = 0
+local lastAIPackage = nil
+local function onUpdate(dt)
+    if dt <= 0 then
+        return
+    end
+    delay = delay + dt
+    local active = interfaces.AI.getActivePackage()
+    local activeType = active and active.type or nil
+    if activeType ~= lastAIPackage then
+        lastAIPackage = activeType
+        if lastAIPackage then
+            print(pself.recordId .. " onUpdate - " .. tostring(active.type) .. ", " .. tostring(active.target))
+        else
+            print(pself.recordId .. " onUpdate - no ai")
+        end
+    end
+
+    local dontInterrupt = { Combat = true, Wander = true, Pursue = true }
+
+    if dontInterrupt[activeType] then
+        return
+    end
+
+    local distanceToPlayer = (collectionData.player.position - pself.position):length2()
+    if distanceToPlayer > 500 * 500 then
+        print("walking toward player")
+        if delay > 1 then
+            interfaces.AI.startPackage({
+                type = "Travel",
+                destPosition = collectionData.player.position,
+                cancelOther = true,
+                isRepeat = false
+            })
+            delay = 0
+        end
+    else
+        print("pursue player")
+        interfaces.AI.startPackage({
+            type = "Pursue",
+            target = collectionData.player,
+            cancelOther = false
+        })
+    end
+end
 
 return {
     eventHandlers = {
@@ -69,6 +116,7 @@ return {
         onInit = onInit,
         onLoad = onLoad,
         onSave = onSave,
+        onUpdate = onUpdate,
         onActive = onActive,
         onInactive = onInactive,
     },

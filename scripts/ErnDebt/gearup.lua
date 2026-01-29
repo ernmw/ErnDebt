@@ -62,7 +62,7 @@ local gearPackages = {
                 "T_Imp_Cm_BootsCol_04" },
         },
         extra = cheapExtras,
-        spells = { { "noise", "hearth heal" }, { "restore strength", "stamina" } },
+        spells = { { "noise", "hearth heal" }, { "restore strength", "stamina" }, {} },
     },
     {
         name = "2h grunt",
@@ -94,25 +94,44 @@ local gearPackages = {
             [SLOT.Shirt] = commonShirts,
             [SLOT.Pants] = commonPants,
             [SLOT.LeftGauntlet] = { "common_glove_left_01" },
-            [SLOT.RightGauntlet] = { "T_Nor_Leather1_BarcerR_01", "right leather bracer", "cloth bracer left" },
+            [SLOT.RightGauntlet] = { "T_Nor_Leather1_BarcerR_01", "right leather bracer", "cloth bracer right" },
             [SLOT.Boots] = {
                 "netch_leather_boots",
                 "chitin boots" },
         },
         extra = cheapExtras,
-        spells = { { "bound dagger", "summon scamp" }, { "shockball", "flamebolt", "frost bolt" }, },
+        spells = { { "bound dagger", "summon scamp" }, { "shockball", "flamebolt", "frost bolt" } },
     },
 }
 
-local function selectGearPackage(pcLevel)
+---@generic T: any
+---@param collection T[]
+---@return T[]
+local function shuffle(collection)
+    local randList = {}
+    for _, item in pairs(collection) do
+        -- get random index to insert into. 1 to size+1.
+        -- # is a special op that gets size
+        local insertAt = math.random(1, 1 + #randList)
+        table.insert(randList, insertAt, item)
+    end
+    return randList
+end
+
+local function selectGearPackages(count, pcLevel)
+    local out = {}
     local allowed = {}
     for _, package in pairs(gearPackages) do
         if package.level <= pcLevel then
             table.insert(allowed, package)
         end
     end
-    local idx = math.random(1, #allowed)
-    return allowed[idx]
+    allowed = shuffle(allowed)
+    for i = 1, count do
+        local safeIndex = ((i - 1) % #allowed) + 1
+        table.insert(out, allowed[safeIndex])
+    end
+    return out
 end
 
 local function equipmentValidator(recordId)
@@ -139,15 +158,15 @@ local function selectRecordFromList(recordList, validator)
     return recordId
 end
 
-local function gearupNPC(npc, pcLevel)
+local function gearupNPC(npc, gearTable)
     local inventory = npc.type.inventory(npc)
-    local gearTable = selectGearPackage(pcLevel)
+
     local toEquip = {}
     -- now select entries from the table and send to the npc.
     for slot, itemList in pairs(gearTable.equipment) do
         local itemRecordId = selectRecordFromList(itemList, equipmentValidator)
         if itemRecordId then
-            local count = slot == SLOT.Ammunition and math.random(10, 20) or 1
+            local count = slot == SLOT.Ammunition and math.random(20, 30) or 1
             local equipmentObject = world.createObject(itemRecordId, count)
             equipmentObject:moveInto(inventory)
             toEquip[slot] = equipmentObject
@@ -174,6 +193,14 @@ local function gearupNPC(npc, pcLevel)
     end
 end
 
+local function gearupNPCs(npcs, pcLevel)
+    --- Try to ensure NPCs have a variety of different packages.
+    local gearTables = selectGearPackages(#npcs, pcLevel)
+    for i, npc in ipairs(npcs) do
+        gearupNPC(npc, gearTables[i])
+    end
+end
+
 return {
-    gearupNPC = gearupNPC,
+    gearupNPCs = gearupNPCs,
 }
