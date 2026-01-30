@@ -25,15 +25,17 @@ local pself           = require("openmw.self")
 local settings        = require("scripts.ErnDebt.settings")
 local async           = require("openmw.async")
 local mwjournal       = require("scripts.ErnDebt.mwjournal")
+local interfaces      = require("openmw.interfaces")
 local ui              = require('openmw.ui')
 local util            = require('openmw.util')
 local types           = require('openmw.types')
 local localization    = core.l10n(MOD_NAME)
 
 -- can't spawn too far, because the actor won't notice the player.
-local spawnDist       = 1000
+local spawnDist       = 600
 
 local persist         = {
+    justWarned = false,
     justSpawned = false,
     currentDebt = 5000,
     currentPaymentSkipStreak = 0,
@@ -69,6 +71,7 @@ local function spawn(cell, position)
     persist.currentDebt = newDebt
     persist.lastSpawnTime = core.getGameTime()
     persist.currentPaymentSkipStreak = persist.currentPaymentSkipStreak + 1
+    persist.justWarned = false
 
     core.sendGlobalEvent(MOD_NAME .. "onCollectorSpawn", {
         player = pself,
@@ -107,7 +110,8 @@ local function shouldSpawn()
         tostring(chance) .. "%.")
     if math.random(0, 100) < chance then
         return true
-    elseif chance > 40 then
+    elseif chance > 40 and not persist.justWarned then
+        persist.justWarned = true
         ui.showMessage(localization("beingWatchedMessage", {}))
     end
     return false
@@ -168,6 +172,10 @@ local function onExitingInterior(data)
     spawn(destCell, destPosition + forward)
 end
 
+local function onStartDialogue(data)
+    interfaces.UI.addMode("Dialogue", data)
+end
+
 local function onLoad(data)
     if data then
         persist = data
@@ -181,6 +189,7 @@ return {
     eventHandlers = {
         [MOD_NAME .. "onCollectorDespawn"] = onCollectorDespawn,
         [MOD_NAME .. "onExitingInterior"] = onExitingInterior,
+        [MOD_NAME .. "onStartDialogue"] = onStartDialogue,
         UiModeChanged = UiModeChanged,
     },
     engineHandlers = {

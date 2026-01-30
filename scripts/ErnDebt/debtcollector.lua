@@ -40,6 +40,14 @@ local function onSave()
     return collectionData
 end
 
+local function printAIPackages()
+    local pkgs = {}
+    interfaces.AI.forEachPackage(function(pkg)
+        table.insert(pkgs, pkg.type)
+    end)
+    print(aux_util.deepToString(pkgs, 3))
+end
+
 local function onActive()
     print("Debt collector " .. pself.recordId .. " is active.")
     -- Adjust dispo and fight
@@ -62,9 +70,13 @@ local function onEquip(data)
     pself.type.setEquipment(pself, data)
 end
 
+local dialogueStarted = false
 local delay = 0
 local lastAIPackage = nil
 local function onUpdate(dt)
+    if dialogueStarted then
+        return
+    end
     if dt <= 0 then
         return
     end
@@ -75,8 +87,10 @@ local function onUpdate(dt)
         lastAIPackage = activeType
         if lastAIPackage then
             print(pself.recordId .. " onUpdate - " .. tostring(active.type) .. ", " .. tostring(active.target))
+            printAIPackages()
         else
             print(pself.recordId .. " onUpdate - no ai")
+            printAIPackages()
         end
     end
 
@@ -87,8 +101,7 @@ local function onUpdate(dt)
     end
 
     local distanceToPlayer = (collectionData.player.position - pself.position):length2()
-    if distanceToPlayer > 500 * 500 then
-        print("walking toward player")
+    if distanceToPlayer > 100 * 100 then
         if delay > 1 then
             interfaces.AI.startPackage({
                 type = "Travel",
@@ -99,14 +112,12 @@ local function onUpdate(dt)
             delay = 0
         end
     else
-        print("pursue player")
-        interfaces.AI.startPackage({
-            type = "Pursue",
-            target = collectionData.player,
-            cancelOther = false
-        })
+        -- we are close
+        collectionData.player:sendEvent(MOD_NAME .. "onStartDialogue", { target = pself })
+        dialogueStarted = true
     end
 end
+
 
 return {
     eventHandlers = {
