@@ -41,6 +41,7 @@ local persist         = {
     currentPaymentSkipStreak = 0,
     collectorsKilled = 0,
     lastSpawnTime = core.getGameTime(),
+    conversationsSinceLastSpawn = 0,
     -- enabled is true if we are allowed to spawn collectors via the quest state
     enabled = true,
 }
@@ -72,6 +73,7 @@ local function spawn(cell, position)
     persist.lastSpawnTime = core.getGameTime()
     persist.currentPaymentSkipStreak = persist.currentPaymentSkipStreak + 1
     persist.justWarned = false
+    persist.conversationsSinceLastSpawn = 0
 
     core.sendGlobalEvent(MOD_NAME .. "onCollectorSpawn", {
         player = pself,
@@ -95,12 +97,13 @@ local function shouldSpawn()
         return false
     end
 
-    if (not settingCache.debug) and persist.lastSpawnTime + (oneWeekDuration / 2) > core.getGameTime() then
+    if (not settingCache.debug) and persist.lastSpawnTime + oneWeekDuration > core.getGameTime() then
         return false
     end
     -- chance to not spawn the collector goes down the more you skip payments.
     local daysLate = math.ceil((core.getGameTime() - persist.lastSpawnTime - oneWeekDuration) / (24 * 60 * 60))
-    local chance = math.max(5, 5 * daysLate + 3 * persist.currentPaymentSkipStreak)
+    local chance = math.max(5,
+        3 * daysLate + 5 * persist.currentPaymentSkipStreak + persist.conversationsSinceLastSpawn)
     if settingCache.debug then
         chance = 50
     end
@@ -119,12 +122,9 @@ end
 
 
 local function UiModeChanged(data)
-    if (pself.cell.isExterior or pself.cell:hasTag("QuasiExterior")) and data.oldMode == 'Rest' and not data.newMode then
-        if shouldSpawn() then
-            local backward = data.player.rotation:apply(util.vector3(0.0, -1.0, 0.0)):normalize()
-            local location = data.player.position + backward * spawnDist + util.vector3(0.0, 0.0, spawnDist)
-            spawn(pself.cell, location)
-        end
+    --- Talking with people makes you easier to track.
+    if data.newMode == "Dialogue" then
+        persist.conversationsSinceLastSpawn = persist.conversationsSinceLastSpawn + 1
     end
 end
 
