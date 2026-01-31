@@ -42,7 +42,7 @@ local gearPackages = {
         name = "1h grunt",
         level = 1,
         equipment = {
-            [SLOT.Helmet] = { "bonemold_helm", "T_De_Bonemold_HelmOpen_01" },
+            [SLOT.Helmet] = { "bonemold_helm" },
             [SLOT.Cuirass] = {
                 "netch_leather_boiled_cuirass",
                 "T_De_Netch_Cuirass_01",
@@ -87,7 +87,7 @@ local gearPackages = {
         name = "ranged grunt",
         level = 1,
         equipment = {
-            [SLOT.Helmet] = { "netch_leather_boiled_helm", "T_Imp_Cm_HatColWest_01" },
+            [SLOT.Helmet] = { "netch_leather_boiled_helm" },
             [SLOT.Cuirass] = { "netch_leather_cuirass", "T_De_NetchRogue_Cuirass_01", },
             [SLOT.CarriedRight] = { "chitin short bow" },
             [SLOT.Ammunition] = { "chitin arrow" },

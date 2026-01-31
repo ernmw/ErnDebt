@@ -19,6 +19,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 return {
     erncurrentdebt = "erncurrentdebt",
     erndebtminimumpayment = "erndebtminimumpayment",
+    erncurrentdebtcanpay = "erncurrentdebtcanpay",
+    erndebtminimumpaymentcanpay = "erndebtminimumpaymentcanpay",
     erncollectorskilled = "erncollectorskilled",
     erncurrentpaymentskipstreak = "erncurrentpaymentskipstreak",
     ernjustpaidamount = "ernjustpaidamount",

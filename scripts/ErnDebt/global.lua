@@ -35,8 +35,13 @@ local function newDebtCollector(data, recordId, guardRecordIds)
     world.mwscript.getGlobalVariables(data.player)[mwvars.erncurrentdebt] = data.currentDebt
     world.mwscript.getGlobalVariables(data.player)[mwvars.erncollectorskilled] = data.collectorsKilled
     world.mwscript.getGlobalVariables(data.player)[mwvars.erncurrentpaymentskipstreak] = data.currentPaymentSkipStreak
-    world.mwscript.getGlobalVariables(data.player)[mwvars.erndebtminimumpayment] = math.min(data.currentDebt,
-        500 * data.currentPaymentSkipStreak)
+    local minPayment = math.min(data.currentDebt, 500 * data.currentPaymentSkipStreak)
+    world.mwscript.getGlobalVariables(data.player)[mwvars.erndebtminimumpayment] = minPayment
+
+    world.mwscript.getGlobalVariables(data.player)[mwvars.erncurrentdebtcanpay] = (data.playerGold >= data.currentDebt) and
+    1 or 0
+    world.mwscript.getGlobalVariables(data.player)[mwvars.erndebtminimumpaymentcanpay] = (data.playerGold >= minPayment) and
+    1 or 0
 
     print(aux_util.deepToString(data, 4))
 

@@ -50,6 +50,7 @@ local function onActive()
     interfaces.AI.removePackages()
     interfaces.AI.startPackage({
         type = "Wander",
+        distance = 300,
         target = guardData.collector,
         cancelOther = true,
         isRepeat = true

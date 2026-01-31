@@ -62,6 +62,10 @@ local function log(var)
     end
 end
 
+local function currentGold()
+    return pself.type.inventory(pself):countOf("gold_001")
+end
+
 local function spawn(cell, position)
     -- add missing interest
     local weeksSinceSpawn = (core.getGameTime() - persist.lastSpawnTime) / (oneWeekDuration)
@@ -82,6 +86,7 @@ local function spawn(cell, position)
         currentDebt = persist.currentDebt,
         currentPaymentSkipStreak = persist.currentPaymentSkipStreak,
         collectorsKilled = persist.collectorsKilled,
+        playerGold = currentGold(),
     })
 end
 

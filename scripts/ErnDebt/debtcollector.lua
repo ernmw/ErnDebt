@@ -100,6 +100,7 @@ local function onUpdate(dt)
     -- make the bodyguards also attack
     if packageChanged and activeType == "Combat" then
         for _, guard in ipairs(collectionData.guards) do
+            print(guard.recordId .. " notifying bodyguard to attack")
             guard:sendEvent("StartAIPackage", { type = "Combat", target = active.target, cancelOther = true })
         end
     end
