@@ -74,9 +74,6 @@ local dialogueStarted = false
 local delay = 0
 local lastAIPackage = nil
 local function onUpdate(dt)
-    if dialogueStarted then
-        return
-    end
     if dt <= 0 then
         return
     end
@@ -103,6 +100,10 @@ local function onUpdate(dt)
             print(guard.recordId .. " notifying bodyguard to attack")
             guard:sendEvent("StartAIPackage", { type = "Combat", target = active.target, cancelOther = true })
         end
+    end
+
+    if dialogueStarted then
+        return
     end
 
     local dontInterrupt = { Combat = true, Wander = true, Pursue = true }
