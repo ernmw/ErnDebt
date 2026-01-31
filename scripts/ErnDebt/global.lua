@@ -39,9 +39,9 @@ local function newDebtCollector(data, recordId, guardRecordIds)
     world.mwscript.getGlobalVariables(data.player)[mwvars.erndebtminimumpayment] = minPayment
 
     world.mwscript.getGlobalVariables(data.player)[mwvars.erncurrentdebtcanpay] = (data.playerGold >= data.currentDebt) and
-    1 or 0
+        1 or 0
     world.mwscript.getGlobalVariables(data.player)[mwvars.erndebtminimumpaymentcanpay] = (data.playerGold >= minPayment) and
-    1 or 0
+        1 or 0
 
     print(aux_util.deepToString(data, 4))
 
@@ -94,6 +94,7 @@ local function onCollectorDespawn(data)
     -- pass through if we paid some debt. mwscript must set this value.
     data.justPaidAmount = world.mwscript.getGlobalVariables(data.player)[mwvars.ernjustpaidamount]
     data.player:sendEvent(MOD_NAME .. "onCollectorDespawn", data)
+    world.mwscript.getGlobalVariables(data.player)[mwvars.ernjustpaidamount] = 0
 end
 
 local function onBodyguardDespawn(data)
