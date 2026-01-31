@@ -138,11 +138,20 @@ local function UiModeChanged(data)
 end
 
 local function onCollectorDespawn(data)
+    local quest = types.Player.quests(pself)[mwjournal.questId]
+    if quest.stage == 1 then
+        quest:addJournalEntry(5, pself)
+    end
+
     persist.justSpawned = false
     if data.dead then
         log("Collector killed.")
         persist.collectorsKilled = persist.collectorsKilled + 1
+        if quest.stage < 100 then
+            quest:addJournalEntry(10, pself)
+        end
     end
+
     if data.justPaidAmount <= 0 then
         log("Payment skipped.")
     else

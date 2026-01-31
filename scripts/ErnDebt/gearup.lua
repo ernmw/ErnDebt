@@ -33,7 +33,8 @@ local commonPants  = { "common_pants_01", "common_pants_02", "common_pants_03", 
 local commonShirts = { "common_shirt_01", "common_shirt_02", "common_shirt_03", "common_shirt_04", "common_shirt_05",
     "T_Com_Cm_Shirt_03", "T_Com_Cm_Shirt_04" }
 local cheapExtras  = { "Potion_Local_Brew_01", "p_restore_health_b", "p_fortify_fatigue_s", "p_fortify_health_s",
-    "potion_comberry_wine_01", "p_magicka_resistance_b", "p_lightning shield_s", "p_fire_shield_s", "p_frost_shield_s" }
+    "potion_comberry_wine_01", "p_magicka_resistance_b", "p_lightning shield_s", "p_fire_shield_s", "p_frost_shield_s",
+    "potion_skooma_01" }
 
 -- a random package is chosen, provided it meets the requirements.
 -- at least one element in each primitive list must be in the base game.

@@ -76,11 +76,8 @@ local function newDebtCollector(data, recordId, guardRecordIds)
 end
 
 local function onCollectorSpawn(data)
-    local player = data.player
-    local currentDebt = data.currentDebt
-    local currentPaymentSkipStreak = data.currentPaymentSkipStreak
-
-    newDebtCollector(data, "erndebt_collector", { "tolvise othralen" })
+    local guards = (data.collectorsKilled > 0) and { "erndebt_bodyguard" } or {}
+    newDebtCollector(data, "erndebt_collector", guards)
 end
 
 local function onCollectorDespawn(data)
