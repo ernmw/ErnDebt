@@ -25,29 +25,50 @@ local gearup          = require("scripts.ErnDebt.gearup")
 local world           = require("openmw.world")
 local types           = require("openmw.types")
 local util            = require("openmw.util")
+local aux_util        = require('openmw_aux.util')
 
 local collectorScript = "scripts\\ErnDebt\\debtcollector.lua"
+local bodyguardScript = "scripts\\ErnDebt\\bodyguard.lua"
 
-local function newDebtCollector(data, recordId)
+local function newDebtCollector(data, recordId, guardRecordIds)
     -- update mw vars from lua.
     world.mwscript.getGlobalVariables(data.player)[mwvars.erncurrentdebt] = data.currentDebt
     world.mwscript.getGlobalVariables(data.player)[mwvars.erncollectorskilled] = data.collectorsKilled
     world.mwscript.getGlobalVariables(data.player)[mwvars.erncurrentpaymentskipstreak] = data.currentPaymentSkipStreak
+    world.mwscript.getGlobalVariables(data.player)[mwvars.erndebtminimumpayment] = math.min(data.currentDebt,
+        500 * data.currentPaymentSkipStreak)
+
+    print(aux_util.deepToString(data, 4))
 
     -- make the npc
-    local new = world.createObject(recordId, 1)
-    new:addScript(collectorScript, data)
-    -- move it behind the player
-
     print("Spawning new debt collector " .. recordId .. " at " .. data.cellId .. ": " .. tostring(data.position) .. ".")
+    local new = world.createObject(recordId, 1)
+
+    local npcs = { new }
+    data.guards = {}
+    for _, id in ipairs(guardRecordIds) do
+        local newGuard = world.createObject(id, 1)
+        newGuard:addScript(bodyguardScript, { collector = new, player = data.player })
+        newGuard:teleport(world.getCellById(data.cellId),
+            util.vector3(data.position.x + math.random(30) - 15, data.position.y + math.random(30) - 15, data.position.z),
+            {
+                onGround = true,
+            })
+        table.insert(npcs, newGuard)
+        table.insert(data.guards, newGuard)
+    end
+
+    new:addScript(collectorScript, data)
+
+    -- move the collector
     new:teleport(world.getCellById(data.cellId),
-        util.vector3(data.position.x, data.position.y, data.position.z),
+        util.vector3(data.position.x + math.random(30) - 15, data.position.y + math.random(30) - 15, data.position.z),
         {
             onGround = true,
         })
 
     local pcLevel = types.Actor.stats.level(data.player).current
-    gearup.gearupNPCs({ new }, pcLevel + data.collectorsKilled)
+    gearup.gearupNPCs(npcs, pcLevel + data.collectorsKilled)
 end
 
 local function onCollectorSpawn(data)
@@ -55,7 +76,7 @@ local function onCollectorSpawn(data)
     local currentDebt = data.currentDebt
     local currentPaymentSkipStreak = data.currentPaymentSkipStreak
 
-    newDebtCollector(data, "tolvise othralen")
+    newDebtCollector(data, "erndebt_collector", { "tolvise othralen" })
 end
 
 local function onCollectorDespawn(data)
@@ -68,6 +89,15 @@ local function onCollectorDespawn(data)
     -- pass through if we paid some debt. mwscript must set this value.
     data.justPaidAmount = world.mwscript.getGlobalVariables(data.player)[mwvars.ernjustpaidamount]
     data.player:sendEvent(MOD_NAME .. "onCollectorDespawn", data)
+end
+
+local function onBodyguardDespawn(data)
+    data.npc:removeScript(bodyguardScript)
+    if not data.dead then
+        -- remove the collector if not dead
+        data.npc.enabled = false
+        data.npc:remove()
+    end
 end
 
 local function onActivate(object, actor)
@@ -95,6 +125,7 @@ return {
     eventHandlers = {
         [MOD_NAME .. "onCollectorSpawn"] = onCollectorSpawn,
         [MOD_NAME .. "onCollectorDespawn"] = onCollectorDespawn,
+        [MOD_NAME .. "onBodyguardDespawn"] = onBodyguardDespawn,
     },
     engineHandlers = {
         onActivate = onActivate

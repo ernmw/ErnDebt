@@ -103,7 +103,7 @@ local function shouldSpawn()
     -- chance to not spawn the collector goes down the more you skip payments.
     local daysLate = math.ceil((core.getGameTime() - persist.lastSpawnTime - oneWeekDuration) / (24 * 60 * 60))
     local chance = math.max(5,
-        3 * daysLate + 5 * persist.currentPaymentSkipStreak + persist.conversationsSinceLastSpawn)
+        3 * daysLate + 5 * persist.currentPaymentSkipStreak + (persist.conversationsSinceLastSpawn or 0))
     if settingCache.debug then
         chance = 50
     end

@@ -83,7 +83,10 @@ local function onUpdate(dt)
     delay = delay + dt
     local active = interfaces.AI.getActivePackage()
     local activeType = active and active.type or nil
-    if activeType ~= lastAIPackage then
+    local packageChanged = activeType ~= lastAIPackage
+
+    -- debug print
+    if packageChanged then
         lastAIPackage = activeType
         if lastAIPackage then
             print(pself.recordId .. " onUpdate - " .. tostring(active.type) .. ", " .. tostring(active.target))
@@ -94,8 +97,14 @@ local function onUpdate(dt)
         end
     end
 
-    local dontInterrupt = { Combat = true, Wander = true, Pursue = true }
+    -- make the bodyguards also attack
+    if packageChanged and activeType == "Combat" then
+        for _, guard in ipairs(collectionData.guards) do
+            guard:sendEvent("StartAIPackage", { type = "Combat", target = active.target, cancelOther = true })
+        end
+    end
 
+    local dontInterrupt = { Combat = true, Wander = true, Pursue = true }
     if dontInterrupt[activeType] then
         return
     end
@@ -112,7 +121,8 @@ local function onUpdate(dt)
             delay = 0
         end
     else
-        -- we are close
+        -- we are close. start dialogue.
+        interfaces.AI.removePackages("Travel")
         collectionData.player:sendEvent(MOD_NAME .. "onStartDialogue", { target = pself })
         dialogueStarted = true
     end
