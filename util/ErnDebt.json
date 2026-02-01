@@ -1,0 +1,1341 @@
+[
+  {
+    "type": "Header",
+    "flags": "",
+    "version": 1.3,
+    "file_type": "Esp",
+    "author": "Erin and Dubious",
+    "description": "https://github.com/ernmw/erndebt",
+    "num_objects": 29,
+    "masters": [
+      [
+        "Morrowind.esm",
+        79837557
+      ],
+      [
+        "Tribunal.esm",
+        4565686
+      ],
+      [
+        "Bloodmoon.esm",
+        9631798
+      ]
+    ]
+  },
+  {
+    "type": "GlobalVariable",
+    "flags": "",
+    "id": "erncollectorskilled",
+    "value": {
+      "type": "Float",
+      "data": 0.0
+    }
+  },
+  {
+    "type": "GlobalVariable",
+    "flags": "",
+    "id": "erncurrentdebt",
+    "value": {
+      "type": "Long",
+      "data": 0
+    }
+  },
+  {
+    "type": "GlobalVariable",
+    "flags": "",
+    "id": "erncurrentdebtcanpay",
+    "value": {
+      "type": "Long",
+      "data": 0
+    }
+  },
+  {
+    "type": "GlobalVariable",
+    "flags": "",
+    "id": "erncurrentpaymentskipstreak",
+    "value": {
+      "type": "Long",
+      "data": 0
+    }
+  },
+  {
+    "type": "GlobalVariable",
+    "flags": "",
+    "id": "erndebtminimumpayment",
+    "value": {
+      "type": "Long",
+      "data": 0
+    }
+  },
+  {
+    "type": "GlobalVariable",
+    "flags": "",
+    "id": "erndebtminimumpaymentcanpay",
+    "value": {
+      "type": "Long",
+      "data": 0
+    }
+  },
+  {
+    "type": "GlobalVariable",
+    "flags": "",
+    "id": "ernjustpaidamount",
+    "value": {
+      "type": "Long",
+      "data": 0
+    }
+  },
+  {
+    "type": "Script",
+    "flags": "",
+    "id": "erndebt_collectorscript",
+    "header": {
+      "num_shorts": 0,
+      "num_longs": 0,
+      "num_floats": 0,
+      "bytecode_length": 0,
+      "variables_length": 0
+    },
+    "variables": "KLUv/QBYIQAAAAAAAA==",
+    "bytecode": "KLUv/QBYIQAAAAAAAA==",
+    "text": "Begin erndebt_collectorscript\n\nShort NoLore\nShort T_Local_NoLore\nShort erndebt_collectorvar\n\nEnd erndebt_collectorscript\n"
+  },
+  {
+    "type": "Npc",
+    "flags": "",
+    "id": "erndebt_bodyguard",
+    "name": "Thug",
+    "script": "nolore",
+    "mesh": "",
+    "inventory": [],
+    "spells": [
+      "resist magicka_25"
+    ],
+    "ai_data": {
+      "hello": 0,
+      "fight": 70,
+      "flee": 20,
+      "alarm": 50,
+      "services": ""
+    },
+    "ai_packages": [
+      {
+        "type": "Wander",
+        "distance": 256,
+        "duration": 5,
+        "game_hour": 0,
+        "idle2": 60,
+        "idle3": 20,
+        "idle4": 10,
+        "idle5": 10,
+        "idle6": 0,
+        "idle7": 10,
+        "idle8": 0,
+        "idle9": 0,
+        "reset": 1
+      }
+    ],
+    "travel_destinations": [],
+    "race": "Orc",
+    "class": "Warrior",
+    "faction": "",
+    "head": "b_n_orc_m_head_02",
+    "hair": "b_n_orc_m_hair_01",
+    "npc_flags": "IS_BASE",
+    "blood_type": 0,
+    "data": {
+      "level": 6,
+      "stats": {
+        "attributes": [
+          60,
+          50,
+          40,
+          40,
+          40,
+          50,
+          30,
+          50
+        ],
+        "skills": [
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          30,
+          60,
+          30,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          30
+        ],
+        "health": 95,
+        "magicka": 40,
+        "fatigue": 250
+      },
+      "disposition": 30,
+      "reputation": 0,
+      "rank": 0,
+      "gold": 0
+    }
+  },
+  {
+    "type": "Npc",
+    "flags": "",
+    "id": "erndebt_collector",
+    "name": "Repossessor",
+    "script": "erndebt_collectorscript",
+    "mesh": "",
+    "inventory": [],
+    "spells": [],
+    "ai_data": {
+      "hello": 0,
+      "fight": 70,
+      "flee": 20,
+      "alarm": 50,
+      "services": ""
+    },
+    "ai_packages": [
+      {
+        "type": "Wander",
+        "distance": 256,
+        "duration": 5,
+        "game_hour": 0,
+        "idle2": 60,
+        "idle3": 20,
+        "idle4": 10,
+        "idle5": 10,
+        "idle6": 0,
+        "idle7": 10,
+        "idle8": 0,
+        "idle9": 0,
+        "reset": 1
+      }
+    ],
+    "travel_destinations": [],
+    "race": "Imperial",
+    "class": "Agent",
+    "faction": "",
+    "head": "b_n_imperial_f_head_02",
+    "hair": "b_n_imperial_f_hair_02",
+    "npc_flags": "FEMALE | IS_BASE",
+    "blood_type": 0,
+    "data": {
+      "level": 5,
+      "stats": {
+        "attributes": [
+          50,
+          50,
+          50,
+          50,
+          60,
+          50,
+          50,
+          50
+        ],
+        "skills": [
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          30,
+          60,
+          30,
+          60,
+          60,
+          60,
+          60,
+          60,
+          60,
+          30
+        ],
+        "health": 60,
+        "magicka": 60,
+        "fatigue": 200
+      },
+      "disposition": 30,
+      "reputation": 0,
+      "rank": 0,
+      "gold": 0
+    }
+  },
+  {
+    "type": "Dialogue",
+    "flags": "",
+    "id": "ern_debt",
+    "dialogue_type": "Journal"
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "219812231715056936089154077889",
+    "prev_id": "",
+    "next_id": "672983714016812547709266552834",
+    "data": {
+      "dialogue_type": "Journal",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "Debt",
+    "quest_state": "Name",
+    "filters": [],
+    "script_text": ""
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "672983714016812547709266552834",
+    "prev_id": "219812231715056936089154077889",
+    "next_id": "321896415615151856980868961181",
+    "data": {
+      "dialogue_type": "Journal",
+      "disposition": 1,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "I cut a deal with some powerful people to get out of prison. They intercepted a prisoner that was transferring to Vvardenfell and put me in their place. I'm not sure what happened to the prisoner, but I've been set up with their identity. I'm finally free. I just hope I can afford it.",
+    "filters": [],
+    "script_text": ""
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "321896415615151856980868961181",
+    "prev_id": "672983714016812547709266552834",
+    "next_id": "182031913314951962870291732135",
+    "data": {
+      "dialogue_type": "Journal",
+      "disposition": 5,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "I was approached by a debt collector. They'll keep showing up every week or so until I can pay off the 5000 gold I owe, with interest.",
+    "filters": [],
+    "script_text": ""
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "182031913314951962870291732135",
+    "prev_id": "321896415615151856980868961181",
+    "next_id": "30884336302146474603044237581",
+    "data": {
+      "dialogue_type": "Journal",
+      "disposition": 10,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "I killed a debt collector.",
+    "filters": [],
+    "script_text": ""
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "30884336302146474603044237581",
+    "prev_id": "182031913314951962870291732135",
+    "next_id": "18608273906212012001315489155",
+    "data": {
+      "dialogue_type": "Journal",
+      "disposition": 100,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "I finished paying off my debt.",
+    "quest_state": "Finished",
+    "filters": [],
+    "script_text": ""
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "18608273906212012001315489155",
+    "prev_id": "30884336302146474603044237581",
+    "next_id": "",
+    "data": {
+      "dialogue_type": "Journal",
+      "disposition": 101,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "I killed the lender.",
+    "quest_state": "Finished",
+    "filters": [],
+    "script_text": ""
+  },
+  {
+    "type": "Dialogue",
+    "flags": "",
+    "id": "Greeting 1",
+    "dialogue_type": "Greeting"
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "423058549614781974897127344899",
+    "prev_id": "13568231434823734",
+    "next_id": "241384107510504165836269818013",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "It was nice doing business with you. You won't see us again.",
+    "filters": [
+      {
+        "index": 3,
+        "filter_type": "Local",
+        "function": "VariableCompare",
+        "comparison": "Equal",
+        "id": "erndebt_collectorvar",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Greater",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Less",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 100
+        }
+      },
+      {
+        "index": 2,
+        "filter_type": "Function",
+        "function": "Choice",
+        "comparison": "Equal",
+        "id": "ernjustpaidamount",
+        "value": {
+          "type": "Integer",
+          "data": 1
+        }
+      }
+    ],
+    "script_text": "; pay full amount\nPlayer->RemoveItem Gold_001 erncurrentdebt\nset ernjustpaidamount to erncurrentdebt\nJournal ern_debt 100\nGoodbye"
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "241384107510504165836269818013",
+    "prev_id": "423058549614781974897127344899",
+    "next_id": "190702132813439074256355502164",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "Wise choice. We'll be seeing you.",
+    "filters": [
+      {
+        "index": 3,
+        "filter_type": "Local",
+        "function": "VariableCompare",
+        "comparison": "Equal",
+        "id": "erndebt_collectorvar",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Greater",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Less",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 100
+        }
+      },
+      {
+        "index": 2,
+        "filter_type": "Function",
+        "function": "Choice",
+        "comparison": "Equal",
+        "id": "ernjustpaidamount",
+        "value": {
+          "type": "Integer",
+          "data": 2
+        }
+      }
+    ],
+    "script_text": "; pay minimum\nPlayer->RemoveItem Gold_001 erndebtminimumpayment\nset ernjustpaidamount to erndebtminimumpayment\nGoodbye"
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "190702132813439074256355502164",
+    "prev_id": "241384107510504165836269818013",
+    "next_id": "19622229602007859188098221365",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "You'd better have the gold next time we come around, or it won't go well for you. Run along.",
+    "filters": [
+      {
+        "index": 3,
+        "filter_type": "Local",
+        "function": "VariableCompare",
+        "comparison": "Equal",
+        "id": "erndebt_collectorvar",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Greater",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Less",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 100
+        }
+      },
+      {
+        "index": 2,
+        "filter_type": "Function",
+        "function": "Choice",
+        "comparison": "Equal",
+        "id": "ernjustpaidamount",
+        "value": {
+          "type": "Integer",
+          "data": 3
+        }
+      }
+    ],
+    "script_text": "Goodbye"
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "19622229602007859188098221365",
+    "prev_id": "190702132813439074256355502164",
+    "next_id": "156914372511402682672766079264",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "Then I'll take the gold from your corpse!",
+    "filters": [
+      {
+        "index": 3,
+        "filter_type": "Local",
+        "function": "VariableCompare",
+        "comparison": "Equal",
+        "id": "erndebt_collectorvar",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Greater",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Less",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 100
+        }
+      },
+      {
+        "index": 2,
+        "filter_type": "Function",
+        "function": "Choice",
+        "comparison": "Equal",
+        "id": "ernjustpaidamount",
+        "value": {
+          "type": "Integer",
+          "data": 4
+        }
+      }
+    ],
+    "script_text": "StartCombat Player\nGoodbye"
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "156914372511402682672766079264",
+    "prev_id": "19622229602007859188098221365",
+    "next_id": "314277004318242741241597031755",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "It's time to pay up, %PCName. ",
+    "filters": [
+      {
+        "index": 6,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "LessEqual",
+        "id": "erncurrentpaymentskipstreak",
+        "value": {
+          "type": "Integer",
+          "data": 1
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "Greater",
+        "id": "erndebtminimumpaymentcanpay",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 5,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "Greater",
+        "id": "erncurrentdebtcanpay",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Local",
+        "function": "VariableCompare",
+        "comparison": "Equal",
+        "id": "erndebt_collectorvar",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Greater",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Less",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 100
+        }
+      },
+      {
+        "index": 2,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "LessEqual",
+        "id": "ernjustpaidamount",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      }
+    ],
+    "script_text": "; all choices available\nChoice, \"[Pay off the debt.]\", 1, \"[Pay the minimum amount.]\", 2, \"I need an extension.\", 3, \"No.\", 4\n"
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "314277004318242741241597031755",
+    "prev_id": "156914372511402682672766079264",
+    "next_id": "20369301528804903651055716359",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "It's time to pay up, %PCName. No more excuses.",
+    "filters": [
+      {
+        "index": 6,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "Greater",
+        "id": "erncurrentpaymentskipstreak",
+        "value": {
+          "type": "Integer",
+          "data": 1
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "Greater",
+        "id": "erndebtminimumpaymentcanpay",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 5,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "Greater",
+        "id": "erncurrentdebtcanpay",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Local",
+        "function": "VariableCompare",
+        "comparison": "Equal",
+        "id": "erndebt_collectorvar",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Greater",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Less",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 100
+        }
+      },
+      {
+        "index": 2,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "LessEqual",
+        "id": "ernjustpaidamount",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      }
+    ],
+    "script_text": "; most choices available\nChoice, \"[Pay off the debt.]\", 1, \"[Pay the minimum amount.]\", 2, \"No.\", 4\n"
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "20369301528804903651055716359",
+    "prev_id": "314277004318242741241597031755",
+    "next_id": "360152401511124446259371262481",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "Hello %PCName. I'm here to collect.",
+    "filters": [
+      {
+        "index": 3,
+        "filter_type": "Local",
+        "function": "VariableCompare",
+        "comparison": "Equal",
+        "id": "erndebt_collectorvar",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Greater",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Less",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 100
+        }
+      },
+      {
+        "index": 2,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "LessEqual",
+        "id": "ernjustpaidamount",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "LessEqual",
+        "id": "erncurrentdebtcanpay",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 5,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "Greater",
+        "id": "erndebtminimumpaymentcanpay",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 6,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "LessEqual",
+        "id": "erncurrentpaymentskipstreak",
+        "value": {
+          "type": "Integer",
+          "data": 1
+        }
+      }
+    ],
+    "script_text": "; min payment and skip available\nChoice, \"[Pay the minimum amount.]\", 2, \"I need an extension.\", 3, \"No.\", 4\n"
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "360152401511124446259371262481",
+    "prev_id": "20369301528804903651055716359",
+    "next_id": "193563779511990698953328966324",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "Hello %PCName. I'm here to collect. No more excuses.",
+    "filters": [
+      {
+        "index": 3,
+        "filter_type": "Local",
+        "function": "VariableCompare",
+        "comparison": "Equal",
+        "id": "erndebt_collectorvar",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Greater",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Less",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 100
+        }
+      },
+      {
+        "index": 2,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "LessEqual",
+        "id": "ernjustpaidamount",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "LessEqual",
+        "id": "erncurrentdebtcanpay",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 5,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "Greater",
+        "id": "erndebtminimumpaymentcanpay",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 6,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "LessEqual",
+        "id": "erncurrentpaymentskipstreak",
+        "value": {
+          "type": "Integer",
+          "data": 1
+        }
+      }
+    ],
+    "script_text": "; min payment available\nChoice, \"[Pay the minimum amount.]\", 2, \"No.\", 4\n"
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "193563779511990698953328966324",
+    "prev_id": "360152401511124446259371262481",
+    "next_id": "25190013755624054409527620750",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "Your pockets are looking a little light, but it's still time to pay up, %PCRace. Next time I see you, you better have the gold. This isn't a charity.",
+    "filters": [
+      {
+        "index": 3,
+        "filter_type": "Local",
+        "function": "VariableCompare",
+        "comparison": "Equal",
+        "id": "erndebt_collectorvar",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Greater",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Less",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 100
+        }
+      },
+      {
+        "index": 2,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "LessEqual",
+        "id": "ernjustpaidamount",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 6,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "LessEqual",
+        "id": "erncurrentpaymentskipstreak",
+        "value": {
+          "type": "Integer",
+          "data": 1
+        }
+      }
+    ],
+    "script_text": "; no money\nGoodbye"
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "25190013755624054409527620750",
+    "prev_id": "193563779511990698953328966324",
+    "next_id": "110721213012598463558942930882",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "You think this is a joke? You'll pay with your life!",
+    "filters": [
+      {
+        "index": 3,
+        "filter_type": "Global",
+        "function": "VariableCompare",
+        "comparison": "LessEqual",
+        "id": "ernjustpaidamount",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Local",
+        "function": "VariableCompare",
+        "comparison": "Equal",
+        "id": "erndebt_collectorvar",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Greater",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Less",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 100
+        }
+      }
+    ],
+    "script_text": "; no money\n; this is the default response\n; it should be last in the Greeting 1 list\n; don't bother with reading mwvars\nStartCombat Player\nGoodbye"
+  },
+  {
+    "type": "DialogueInfo",
+    "flags": "",
+    "id": "110721213012598463558942930882",
+    "prev_id": "25190013755624054409527620750",
+    "next_id": "",
+    "data": {
+      "dialogue_type": "Greeting",
+      "disposition": 0,
+      "speaker_rank": -1,
+      "speaker_sex": "Any",
+      "player_rank": -1
+    },
+    "speaker_id": "",
+    "speaker_race": "",
+    "speaker_class": "",
+    "speaker_faction": "",
+    "speaker_cell": "",
+    "player_faction": "",
+    "sound_path": "",
+    "text": "Don't push your luck, %PCRace.",
+    "filters": [
+      {
+        "index": 3,
+        "filter_type": "Local",
+        "function": "VariableCompare",
+        "comparison": "Equal",
+        "id": "erndebt_collectorvar",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 3,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Greater",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 0
+        }
+      },
+      {
+        "index": 4,
+        "filter_type": "Journal",
+        "function": "JournalType",
+        "comparison": "Less",
+        "id": "ern_debt",
+        "value": {
+          "type": "Integer",
+          "data": 100
+        }
+      }
+    ],
+    "script_text": "; this happens if the player talks to them again\nGoodbye"
+  }
+]
