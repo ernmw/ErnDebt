@@ -536,7 +536,7 @@
     "speaker_cell": "",
     "player_faction": "",
     "sound_path": "",
-    "text": "Wise choice. We'll be seeing you.",
+    "text": "Wise choice. Now you just owe %erncurrentdebt gold. We'll be seeing you.",
     "filters": [
       {
         "index": 3,
@@ -947,7 +947,7 @@
     "speaker_cell": "",
     "player_faction": "",
     "sound_path": "",
-    "text": "Hello %PCName. I'm here to collect.",
+    "text": "Hello %PCName. I'm here to collect. The boss would accept %erndebtminimumpayment gold as a gesture of good faith.",
     "filters": [
       {
         "index": 3,
@@ -1049,7 +1049,7 @@
     "speaker_cell": "",
     "player_faction": "",
     "sound_path": "",
-    "text": "Hello %PCName. I'm here to collect. No more excuses.",
+    "text": "Hello %PCName. I'm here to collect. The boss would accept %erndebtminimumpayment gold as a gesture of good faith. No more excuses.",
     "filters": [
       {
         "index": 3,
@@ -1121,7 +1121,7 @@
         "index": 6,
         "filter_type": "Global",
         "function": "VariableCompare",
-        "comparison": "LessEqual",
+        "comparison": "Greater",
         "id": "erncurrentpaymentskipstreak",
         "value": {
           "type": "Integer",
