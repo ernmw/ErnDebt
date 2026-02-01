@@ -103,6 +103,26 @@ local gearPackages = {
         extra = cheapExtras,
         spells = { { "bound dagger", "summon scamp" }, { "shockball", "flamebolt", "frost bolt" } },
     },
+    {
+        name = "1h grunt - mid",
+        level = 5,
+        equipment = {
+            [SLOT.Helmet] = { "nordic_iron_helm" },
+            [SLOT.Cuirass] = {
+                "trollbone_cuirass",
+                "nordic_iron_cuirass" },
+            [SLOT.CarriedRight] = { "steel war axe", "dwarven mace", "dwarven shortsword", "steel katana" },
+            [SLOT.CarriedLeft] = { "steel_towershield", "steel_shield" },
+            [SLOT.Shirt] = commonShirts,
+            [SLOT.Pants] = commonPants,
+            [SLOT.Greaves] = { "bonemold_greaves" },
+            [SLOT.LeftGauntlet] = { "dwemer_bracer_left" },
+            [SLOT.RightGauntlet] = { "dwemer_bracer_right" },
+            [SLOT.Boots] = { "bonemold_boots" },
+        },
+        extra = cheapExtras,
+        spells = { { "noise", "hearth heal" }, { "restore strength", "stamina" }, {} },
+    },
 }
 
 ---@generic T: any
