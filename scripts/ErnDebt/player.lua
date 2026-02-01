@@ -80,7 +80,10 @@ local function spawn(cell, position)
     persist.conversationsSinceLastSpawn = 0
     local minPayment = math.min(persist.currentDebt, 500 * persist.currentPaymentSkipStreak)
 
-    ui.showMessage(localization("collectorSpawnedMessage", { currentDebt = persist.currentDebt, minPayment = minPayment }))
+    if settingCache.debug then
+        ui.showMessage(localization("collectorSpawnedMessage",
+            { currentDebt = persist.currentDebt, minPayment = minPayment }))
+    end
 
     core.sendGlobalEvent(MOD_NAME .. "onCollectorSpawn", {
         player = pself,
