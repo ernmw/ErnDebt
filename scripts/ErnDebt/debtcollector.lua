@@ -29,11 +29,17 @@ local function onInit(initData)
     print("Debt collector " .. pself.recordId .. " initialized.")
     if initData ~= nil then
         collectionData = initData
+        if not collectionData.spawnTime then
+            collectionData.spawnTime = core.getGameTime()
+        end
     end
 end
 local function onLoad(data)
     if data then
         collectionData = data
+        if not collectionData.spawnTime then
+            collectionData.spawnTime = core.getGameTime()
+        end
     end
 end
 local function onSave()
@@ -59,18 +65,30 @@ local function onActive()
 end
 
 local function onInactive()
+    -- don't despawn if dialogue or combat haven't occured or if it's been less than 5 hours.
+    local longTime = collectionData.spawnTime + (5 * 60 * 60) < core.getGameTime()
+    if (not longTime) and (not collectionData.dialogueStarted) and (not collectionData.combatStarted) then
+        return
+    end
+
     core.sendGlobalEvent(MOD_NAME .. "onCollectorDespawn", {
         player = collectionData.player,
         npc = pself,
         dead = pself.type.isDead(pself)
     })
+    for _, guard in ipairs(collectionData.guards) do
+        core.sendGlobalEvent(MOD_NAME .. "onBodyguardDespawn", {
+            player = collectionData.player,
+            npc = guard,
+            dead = guard.type.isDead(guard)
+        })
+    end
 end
 
 local function onEquip(data)
     pself.type.setEquipment(pself, data)
 end
 
-local dialogueStarted = false
 local delay = 0
 local lastAIPackage = nil
 local function onUpdate(dt)
@@ -94,15 +112,17 @@ local function onUpdate(dt)
         end
     end
 
-    -- make the bodyguards also attack
     if packageChanged and activeType == "Combat" then
+        -- save if combat started
+        collectionData.combatStarted = true
+        -- make the bodyguards also attack
         for _, guard in ipairs(collectionData.guards) do
             print(guard.recordId .. " notifying bodyguard to attack")
             guard:sendEvent("StartAIPackage", { type = "Combat", target = active.target, cancelOther = true })
         end
     end
 
-    if dialogueStarted then
+    if collectionData.dialogueStarted then
         return
     end
 
@@ -126,7 +146,7 @@ local function onUpdate(dt)
         -- we are close. start dialogue.
         interfaces.AI.removePackages("Travel")
         collectionData.player:sendEvent(MOD_NAME .. "onStartDialogue", { target = pself })
-        dialogueStarted = true
+        collectionData.dialogueStarted = true
     end
 end
 

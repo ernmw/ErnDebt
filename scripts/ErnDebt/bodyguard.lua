@@ -57,13 +57,6 @@ local function onActive()
     })
 end
 
-
-local function onInactive()
-    core.sendGlobalEvent(MOD_NAME .. "onBodyguardDespawn", {
-        npc = pself,
-    })
-end
-
 local function onEquip(data)
     pself.type.setEquipment(pself, data)
 end
@@ -77,6 +70,5 @@ return {
         onLoad = onLoad,
         onSave = onSave,
         onActive = onActive,
-        onInactive = onInactive,
     },
 }
