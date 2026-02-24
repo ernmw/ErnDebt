@@ -71,6 +71,51 @@ local lookupFuncTable = {
         elseif key == "groupKey" then
             return table.groupKey
         end
+        -- fall through to cached settings section
+        local val = table.cached[key]
+        if val ~= nil then
+            return val
+        else
+            --print("cached settings: " .. aux_util.deepToString(table.cached, 3))
+            --print("current settings: " .. aux_util.deepToString(table.section:asTable(), 3))
+            error("unknown setting: " .. tostring(table.groupKey) .. " - " .. tostring(key))
+            return nil
+        end
+    end,
+}
+
+---@param groupKeyParam string
+---@return table
+local function newContainer(groupKeyParam)
+    local container = {
+        groupKey = groupKeyParam,
+        section = storage.playerSection(groupKeyParam),
+        cached = {}
+    }
+    container.cached = container.section:asTable()
+
+    setmetatable(container, lookupFuncTable)
+
+    container.subscribe(async:callback(function(_, key)
+        container.cached[key] = container.section:get(key)
+    end))
+
+    return container
+end
+
+
+local lookupFuncTable = {
+    __index = function(table, key)
+        if key == "subscribe" then
+            return function(callback)
+                print("Subscribed to " .. tostring(table.groupKey) .. ".")
+                return table.section.subscribe(table.section, callback)
+            end
+        elseif key == "section" then
+            return table.section
+        elseif key == "groupKey" then
+            return table.groupKey
+        end
         -- fall through to settings section
         local val = table.section:get(key)
         if val ~= nil then
@@ -81,11 +126,7 @@ local lookupFuncTable = {
     end,
 }
 
-local mainContainer = {
-    groupKey = mainGroupKey,
-    section = storage.playerSection(mainGroupKey)
-}
-setmetatable(mainContainer, lookupFuncTable)
+local mainContainer = newContainer(mainGroupKey)
 
 ---@alias SettingContainer table
 
