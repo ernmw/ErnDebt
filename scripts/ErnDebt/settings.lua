@@ -19,6 +19,7 @@ local interfaces   = require("openmw.interfaces")
 local storage      = require("openmw.storage")
 local MOD_NAME     = require("scripts.ErnDebt.ns")
 local util         = require('openmw.util')
+local async        = require("openmw.async")
 
 local mainGroupKey = "Settings/" .. MOD_NAME
 
@@ -102,29 +103,6 @@ local function newContainer(groupKeyParam)
 
     return container
 end
-
-
-local lookupFuncTable = {
-    __index = function(table, key)
-        if key == "subscribe" then
-            return function(callback)
-                print("Subscribed to " .. tostring(table.groupKey) .. ".")
-                return table.section.subscribe(table.section, callback)
-            end
-        elseif key == "section" then
-            return table.section
-        elseif key == "groupKey" then
-            return table.groupKey
-        end
-        -- fall through to settings section
-        local val = table.section:get(key)
-        if val ~= nil then
-            return val
-        else
-            error("unknown setting " .. tostring(key))
-        end
-    end,
-}
 
 local mainContainer = newContainer(mainGroupKey)
 

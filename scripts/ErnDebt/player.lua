@@ -123,11 +123,16 @@ local function shouldSpawn()
         tostring(daysLate) ..
         ". Skip streak: " .. tostring(persist.currentPaymentSkipStreak) .. ". Spawn chance is " ..
         tostring(chance) .. "%.")
-    if math.random(0, 100) < chance then
-        return true
-    elseif chance > 40 and not persist.justWarned then
+    if chance > 20 and not persist.justWarned then
         persist.justWarned = true
         ui.showMessage(localization("beingWatchedMessage", {}))
+        return false
+    end
+    if chance < 20 then
+        return false
+    end
+    if math.random(0, 100) < chance then
+        return true
     end
     return false
 end

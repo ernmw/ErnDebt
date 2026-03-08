@@ -56,12 +56,14 @@ end
 
 local function onActive()
     print("Debt collector " .. pself.recordId .. " is active.")
-    -- Adjust dispo and fight
-    pself.type.stats.ai.fight(pself).base = 70
-    local startDisposition = pself.type.getBaseDisposition(pself, collectionData.player)
-    pself.type.modifyBaseDisposition(pself, collectionData.player, 30 - startDisposition)
-    -- Remove AI so we have full control
-    interfaces.AI.removePackages()
+    if (not collectionData.dialogueStarted) and (not collectionData.combatStarted) then
+        -- Adjust dispo and fight
+        pself.type.stats.ai.fight(pself).base = 70
+        local startDisposition = pself.type.getBaseDisposition(pself, collectionData.player)
+        pself.type.modifyBaseDisposition(pself, collectionData.player, 30 - startDisposition)
+        -- Remove AI so we have full control
+        interfaces.AI.removePackages()
+    end
 end
 
 local function onInactive()
