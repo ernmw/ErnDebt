@@ -67,6 +67,7 @@ local function currentGold()
 end
 
 local function spawn(cell, position)
+    local currentGoldAmt = currentGold()
     -- add missing interest
     local weeksSinceSpawn = (core.getGameTime() - persist.lastSpawnTime) / (oneWeekDuration)
     local newDebt = math.ceil(persist.currentDebt * math.exp(settingCache.interest * weeksSinceSpawn))
@@ -78,7 +79,8 @@ local function spawn(cell, position)
     persist.currentPaymentSkipStreak = persist.currentPaymentSkipStreak + 1
     persist.justWarned = false
     persist.conversationsSinceLastSpawn = 0
-    local minPayment = math.min(persist.currentDebt, 500 * persist.currentPaymentSkipStreak)
+    local minPayment = math.min(persist.currentDebt,
+        math.max(500 * persist.currentPaymentSkipStreak, 0.5 * currentGoldAmt))
 
     if settingCache.debug then
         ui.showMessage(localization("collectorSpawnedMessage",
@@ -92,7 +94,7 @@ local function spawn(cell, position)
         currentDebt = persist.currentDebt,
         currentPaymentSkipStreak = persist.currentPaymentSkipStreak,
         collectorsKilled = persist.collectorsKilled,
-        playerGold = currentGold(),
+        playerGold = currentGoldAmt,
         minPayment = minPayment,
     })
 end
