@@ -133,6 +133,8 @@ local function onUpdate(dt)
         return
     end
 
+    --pself.controls.run = true
+
     local distanceToPlayer = (collectionData.player.position - pself.position):length2()
     if distanceToPlayer > 100 * 100 then
         if delay > 1 then
@@ -152,12 +154,6 @@ local function onUpdate(dt)
     end
 end
 
-local function onFrame(dt)
-    if (not collectionData.combatStarted) and (not collectionData.dialogueStarted) then
-        pself.controls.run = true
-    end
-end
-
 return {
     eventHandlers = {
         [MOD_NAME .. "onEquip"] = onEquip,
@@ -167,7 +163,6 @@ return {
         onLoad = onLoad,
         onSave = onSave,
         onUpdate = onUpdate,
-        onFrame = onFrame,
         onActive = onActive,
         onInactive = onInactive,
     },

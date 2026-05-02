@@ -175,13 +175,23 @@ local function onQuestUpdate(questId, stage)
 end
 
 local function safeLocation(desired, destination, maxRange)
-    local status, list = nearby.findPath(desired, destination, {
+    local desiredOnNavMesh = nearby.findNearestNavMeshPosition(desired, {
+        searchAreaHalfExtents = util.vector3(1000, 1000, 5000),
+        includeFlags = nearby.NAVIGATOR_FLAGS.Walk,
+    })
+
+    if not desiredOnNavMesh then
+        return nil
+    end
+
+    -- https://github.com/OpenMW/openmw/blob/a6c053ab4430627494d351c9714eb7bbffa657c7/components/detournavigator/status.hpp
+    local status, list = nearby.findPath(desiredOnNavMesh, destination, {
         includeFlags = nearby.NAVIGATOR_FLAGS.Walk +
             nearby.NAVIGATOR_FLAGS.UsePathgrid
     })
     if status ~= nearby.FIND_PATH_STATUS.Success then
         settings.debugPrint("failed to path: " .. tostring(status))
-        return desired
+        return nil
     end
     local rangeSquared = maxRange * maxRange
     for i, point in ipairs(list) do
@@ -191,7 +201,7 @@ local function safeLocation(desired, destination, maxRange)
         end
     end
     settings.debugPrint("failed to path: out of points")
-    return desired
+    return nil
 end
 
 local function onExitingInterior(data)
@@ -200,11 +210,18 @@ local function onExitingInterior(data)
     if not shouldSpawn() then
         return
     end
+
     local destCell = types.Door.destCell(data.door)
     local destPosition = types.Door.destPosition(data.door)
     local destRotation = types.Door.destRotation(data.door)
     local forward = destRotation:apply(util.vector3(0.0, 1.0, 0.0)):normalize() * spawnDist
-    spawn(destCell, safeLocation(destPosition + forward, destPosition, spawnDist))
+
+    local spot = safeLocation(destPosition + forward, destPosition, spawnDist)
+    if spot then
+        spawn(destCell, spot)
+    else
+        settings.debugPrint("failed to find safe spot to spawn")
+    end
 end
 
 local function onStartDialogue(data)
