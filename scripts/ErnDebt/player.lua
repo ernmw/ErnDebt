@@ -22,6 +22,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 local MOD_NAME        = require("scripts.ErnDebt.ns")
 local core            = require('openmw.core')
 local pself           = require("openmw.self")
+local nearby          = require("openmw.nearby")
 local settings        = require("scripts.ErnDebt.settings")
 local async           = require("openmw.async")
 local mwjournal       = require("scripts.ErnDebt.mwjournal")
@@ -48,20 +49,6 @@ local persist         = {
 
 local oneWeekDuration = 604800
 
-local settingCache    = {
-    interest = settings.main.interest,
-    debug = settings.main.debug,
-}
-settings.main.subscribe(async:callback(function(_, key)
-    settingCache[key] = settings.main[key]
-end))
-
-local function log(var)
-    if settingCache.debug then
-        print(var)
-    end
-end
-
 local function currentGold()
     return pself.type.inventory(pself):countOf("gold_001")
 end
@@ -70,8 +57,8 @@ local function spawn(cell, position)
     local currentGoldAmt = currentGold()
     -- add missing interest
     local weeksSinceSpawn = (core.getGameTime() - persist.lastSpawnTime) / (oneWeekDuration)
-    local newDebt = math.ceil(persist.currentDebt * math.exp(settingCache.interest * weeksSinceSpawn))
-    log("Weeks since spawn: " ..
+    local newDebt = math.ceil(persist.currentDebt * math.exp(settings.main.interest * weeksSinceSpawn))
+    settings.debugPrint("Weeks since spawn: " ..
         tostring(weeksSinceSpawn) ..
         ". Previous debt: " .. tostring(persist.currentDebt) .. ". New Debt: " .. tostring(newDebt) .. ".")
     persist.currentDebt = newDebt
@@ -82,7 +69,7 @@ local function spawn(cell, position)
     local minPayment = math.min(persist.currentDebt,
         math.max(500 * persist.currentPaymentSkipStreak, 0.5 * currentGoldAmt))
 
-    if settingCache.debug then
+    if settings.main.debug then
         ui.showMessage(localization("collectorSpawnedMessage",
             { currentDebt = persist.currentDebt, minPayment = minPayment }))
     end
@@ -100,7 +87,7 @@ local function spawn(cell, position)
 end
 
 local function shouldSpawn()
-    log("shouldSpawn()")
+    settings.debugPrint("shouldSpawn()")
     if not persist.enabled then
         return false
     end
@@ -111,20 +98,20 @@ local function shouldSpawn()
         return false
     end
 
-    if (not settingCache.debug) and persist.lastSpawnTime + oneWeekDuration > core.getGameTime() then
+    if (not settings.main.debug) and persist.lastSpawnTime + oneWeekDuration > core.getGameTime() then
         return false
     end
     -- chance to not spawn the collector goes down the more you skip payments.
     local daysLate = math.ceil((core.getGameTime() - persist.lastSpawnTime - oneWeekDuration) / (24 * 60 * 60))
     local chance = math.max(5,
         3 * daysLate + 5 * persist.currentPaymentSkipStreak + (persist.conversationsSinceLastSpawn or 0))
-    if settingCache.debug then
+    if settings.main.debug then
         chance = 50
     end
-    log("Days late: " ..
+    settings.debugPrint("Days late: " ..
         tostring(daysLate) ..
         ". Skip streak: " .. tostring(persist.currentPaymentSkipStreak) .. ". Spawn chance is " ..
-        tostring(chance) .. "%.")
+        tostring(chance) .. "pct.")
     if chance > 20 and not persist.justWarned then
         persist.justWarned = true
         ui.showMessage(localization("beingWatchedMessage", {}))
@@ -155,7 +142,7 @@ local function onCollectorDespawn(data)
 
     persist.justSpawned = false
     if data.dead then
-        log("Collector killed.")
+        settings.debugPrint("Collector killed.")
         persist.collectorsKilled = persist.collectorsKilled + 1
         if quest.stage < 100 then
             quest:addJournalEntry(10, pself)
@@ -163,9 +150,9 @@ local function onCollectorDespawn(data)
     end
 
     if data.justPaidAmount <= 0 then
-        log("Payment skipped.")
+        settings.debugPrint("Payment skipped.")
     else
-        log("Paid " .. tostring(data.justPaidAmount) .. ".")
+        settings.debugPrint("Paid " .. tostring(data.justPaidAmount) .. ".")
         persist.currentPaymentSkipStreak = 0
         persist.currentDebt = persist.currentDebt - data.justPaidAmount
     end
@@ -174,7 +161,7 @@ end
 local function ensureQuestStarted()
     local quest = types.Player.quests(pself)[mwjournal.questId]
     if quest.stage <= 0 then
-        log("starting quest")
+        settings.debugPrint("starting quest")
         quest:addJournalEntry(1, pself)
     end
 end
@@ -182,13 +169,33 @@ end
 local function onQuestUpdate(questId, stage)
     if questId == mwjournal.questId then
         persist.enabled = mwjournal.enabled(stage)
-        log("quest stage change: " ..
+        settings.debugPrint("quest stage change: " ..
             tostring(mwjournal.questStages[stage]) .. ", enabled: " .. tostring(persist.enabled))
     end
 end
 
+local function safeLocation(desired, destination, maxRange)
+    local status, list = nearby.findPath(desired, destination, {
+        includeFlags = nearby.NAVIGATOR_FLAGS.Walk +
+            nearby.NAVIGATOR_FLAGS.UsePathgrid
+    })
+    if status ~= nearby.FIND_PATH_STATUS.Success then
+        settings.debugPrint("failed to path: " .. tostring(status))
+        return desired
+    end
+    local rangeSquared = maxRange * maxRange
+    for i, point in ipairs(list) do
+        if (point - desired):length2() < rangeSquared then
+            settings.debugPrint("path found after " .. tostring(i) .. " steps")
+            return point
+        end
+    end
+    settings.debugPrint("failed to path: out of points")
+    return desired
+end
+
 local function onExitingInterior(data)
-    log("exiting interior. current cell: " .. tostring(pself.cell.id))
+    settings.debugPrint("exiting interior. current cell: " .. tostring(pself.cell.id))
     ensureQuestStarted()
     if not shouldSpawn() then
         return
@@ -197,7 +204,7 @@ local function onExitingInterior(data)
     local destPosition = types.Door.destPosition(data.door)
     local destRotation = types.Door.destRotation(data.door)
     local forward = destRotation:apply(util.vector3(0.0, 1.0, 0.0)):normalize() * spawnDist
-    spawn(destCell, destPosition + forward)
+    spawn(destCell, safeLocation(destPosition + forward, destPosition, spawnDist))
 end
 
 local function onStartDialogue(data)

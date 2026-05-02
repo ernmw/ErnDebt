@@ -106,6 +106,17 @@ end
 
 local mainContainer = newContainer(mainGroupKey)
 
+local function debugPrint(str, ...)
+    if mainContainer.debug then
+        local arg = { ... }
+        if arg ~= nil then
+            print(string.format("DEBUG: " .. str, unpack(arg)))
+        else
+            print("DEBUG: " .. str)
+        end
+    end
+end
+
 ---@alias SettingContainer table
 
 ---@class Settings
@@ -116,4 +127,5 @@ local mainContainer = newContainer(mainGroupKey)
 return {
     init = init,
     main = mainContainer,
+    debugPrint = debugPrint
 }
