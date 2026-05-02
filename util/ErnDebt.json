@@ -8,18 +8,9 @@
     "description": "https://github.com/ernmw/erndebt",
     "num_objects": 29,
     "masters": [
-      [
-        "Morrowind.esm",
-        79837557
-      ],
-      [
-        "Tribunal.esm",
-        4565686
-      ],
-      [
-        "Bloodmoon.esm",
-        9631798
-      ]
+      ["Morrowind.esm", 79837557],
+      ["Tribunal.esm", 4565686],
+      ["Bloodmoon.esm", 9631798]
     ]
   },
   {
@@ -104,13 +95,11 @@
     "type": "Npc",
     "flags": "",
     "id": "erndebt_bodyguard",
-    "name": "Thug",
+    "name": "Bodyguard",
     "script": "nolore",
     "mesh": "",
     "inventory": [],
-    "spells": [
-      "resist magicka_25"
-    ],
+    "spells": ["resist magicka_25"],
     "ai_data": {
       "hello": 0,
       "fight": 70,
@@ -146,44 +135,10 @@
     "data": {
       "level": 6,
       "stats": {
-        "attributes": [
-          60,
-          50,
-          40,
-          40,
-          40,
-          50,
-          30,
-          50
-        ],
+        "attributes": [60, 50, 40, 40, 40, 50, 30, 50],
         "skills": [
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          30,
-          60,
-          30,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          30
+          60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+          30, 60, 30, 60, 60, 60, 60, 60, 60, 30
         ],
         "health": 95,
         "magicka": 40,
@@ -239,44 +194,10 @@
     "data": {
       "level": 5,
       "stats": {
-        "attributes": [
-          50,
-          50,
-          50,
-          50,
-          60,
-          50,
-          50,
-          50
-        ],
+        "attributes": [50, 50, 50, 50, 60, 50, 50, 50],
         "skills": [
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          30,
-          60,
-          30,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          30
+          60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+          30, 60, 30, 60, 60, 60, 60, 60, 60, 30
         ],
         "health": 60,
         "magicka": 60,
@@ -536,7 +457,7 @@
     "speaker_cell": "",
     "player_faction": "",
     "sound_path": "",
-    "text": "Wise choice. Now you just owe %erncurrentdebt gold. We'll be seeing you.",
+    "text": "Wise choice. We'll be seeing you.",
     "filters": [
       {
         "index": 3,
@@ -743,7 +664,7 @@
     "speaker_cell": "",
     "player_faction": "",
     "sound_path": "",
-    "text": "It's time to pay up, %PCName. ",
+    "text": "It's time to pay up, %PCName.  Boss says you still owe %erncurrentdebt gold.",
     "filters": [
       {
         "index": 6,
