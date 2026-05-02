@@ -152,6 +152,11 @@ local function onUpdate(dt)
     end
 end
 
+local function onFrame(dt)
+    if (not collectionData.combatStarted) and (not collectionData.dialogueStarted) then
+        pself.controls.run = true
+    end
+end
 
 return {
     eventHandlers = {
@@ -162,6 +167,7 @@ return {
         onLoad = onLoad,
         onSave = onSave,
         onUpdate = onUpdate,
+        onFrame = onFrame,
         onActive = onActive,
         onInactive = onInactive,
     },
