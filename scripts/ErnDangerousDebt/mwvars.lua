@@ -1,5 +1,5 @@
 --[[
-ErnDebt for OpenMW.
+ErnDangerousDebt for OpenMW.
 Copyright (C) Erin Pentecost 2026
 
 This program is free software: you can redistribute it and/or modify
@@ -15,4 +15,13 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
-return "ErnDebt"
+
+return {
+    erncurrentdebt = "erncurrentdebt",
+    ErnDangerousDebtminimumpayment = "ErnDangerousDebtminimumpayment",
+    erncurrentdebtcanpay = "erncurrentdebtcanpay",
+    ErnDangerousDebtminimumpaymentcanpay = "ErnDangerousDebtminimumpaymentcanpay",
+    erncollectorskilled = "erncollectorskilled",
+    erncurrentpaymentskipstreak = "erncurrentpaymentskipstreak",
+    ernjustpaidamount = "ernjustpaidamount",
+}

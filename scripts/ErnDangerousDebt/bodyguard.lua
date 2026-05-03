@@ -1,5 +1,5 @@
 --[[
-ErnDebt for OpenMW.
+ErnDangerousDebt for OpenMW.
 Copyright (C) Erin Pentecost 2026
 
 This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 
-local MOD_NAME   = require("scripts.ErnDebt.ns")
+local MOD_NAME   = require("scripts.ErnDangerousDebt.ns")
 local interfaces = require("openmw.interfaces")
 local pself      = require("openmw.self")
 

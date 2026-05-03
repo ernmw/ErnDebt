@@ -1,5 +1,5 @@
 --[[
-ErnDebt for OpenMW.
+ErnDangerousDebt for OpenMW.
 Copyright (C) Erin Pentecost 2026
 
 This program is free software: you can redistribute it and/or modify
@@ -19,27 +19,27 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -- This file is in charge of tracking and exposing path information.
 -- Interact with it via the interface it exposes.
 
-local MOD_NAME        = require("scripts.ErnDebt.ns")
-local mwvars          = require("scripts.ErnDebt.mwvars")
-local gearup          = require("scripts.ErnDebt.gearup")
+local MOD_NAME        = require("scripts.ErnDangerousDebt.ns")
+local mwvars          = require("scripts.ErnDangerousDebt.mwvars")
+local gearup          = require("scripts.ErnDangerousDebt.gearup")
 local world           = require("openmw.world")
 local types           = require("openmw.types")
 local util            = require("openmw.util")
 local aux_util        = require('openmw_aux.util')
 
-local collectorScript = "scripts\\ErnDebt\\debtcollector.lua"
-local bodyguardScript = "scripts\\ErnDebt\\bodyguard.lua"
+local collectorScript = "scripts\\ErnDangerousDebt\\debtcollector.lua"
+local bodyguardScript = "scripts\\ErnDangerousDebt\\bodyguard.lua"
 
 local function newDebtCollector(data, recordId, guardRecordIds)
     -- update mw vars from lua.
     world.mwscript.getGlobalVariables(data.player)[mwvars.erncurrentdebt] = data.currentDebt
     world.mwscript.getGlobalVariables(data.player)[mwvars.erncollectorskilled] = data.collectorsKilled
     world.mwscript.getGlobalVariables(data.player)[mwvars.erncurrentpaymentskipstreak] = data.currentPaymentSkipStreak
-    world.mwscript.getGlobalVariables(data.player)[mwvars.erndebtminimumpayment] = data.minPayment
+    world.mwscript.getGlobalVariables(data.player)[mwvars.ErnDangerousDebtminimumpayment] = data.minPayment
 
     world.mwscript.getGlobalVariables(data.player)[mwvars.erncurrentdebtcanpay] = (data.playerGold >= data.currentDebt) and
         1 or 0
-    world.mwscript.getGlobalVariables(data.player)[mwvars.erndebtminimumpaymentcanpay] = (data.playerGold >= data.minPayment) and
+    world.mwscript.getGlobalVariables(data.player)[mwvars.ErnDangerousDebtminimumpaymentcanpay] = (data.playerGold >= data.minPayment) and
         1 or 0
 
     print(aux_util.deepToString(data, 4))
@@ -76,8 +76,8 @@ local function newDebtCollector(data, recordId, guardRecordIds)
 end
 
 local function onCollectorSpawn(data)
-    local guards = (data.collectorsKilled > 0) and { "erndebt_bodyguard" } or {}
-    newDebtCollector(data, "erndebt_collector", guards)
+    local guards = (data.collectorsKilled > 0) and { "ErnDangerousDebt_bodyguard" } or {}
+    newDebtCollector(data, "ErnDangerousDebt_collector", guards)
 end
 
 local function onCollectorDespawn(data)

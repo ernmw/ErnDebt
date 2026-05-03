@@ -5,21 +5,12 @@
     "version": 1.3,
     "file_type": "Esp",
     "author": "Erin and Dubious",
-    "description": "https://github.com/ernmw/erndebt",
+    "description": "https://github.com/ernmw/ErnDangerousDebt",
     "num_objects": 29,
     "masters": [
-      [
-        "Morrowind.esm",
-        79837557
-      ],
-      [
-        "Tribunal.esm",
-        4565686
-      ],
-      [
-        "Bloodmoon.esm",
-        9631798
-      ]
+      ["Morrowind.esm", 79837557],
+      ["Tribunal.esm", 4565686],
+      ["Bloodmoon.esm", 9631798]
     ]
   },
   {
@@ -61,7 +52,7 @@
   {
     "type": "GlobalVariable",
     "flags": "",
-    "id": "erndebtminimumpayment",
+    "id": "ErnDangerousDebtminimumpayment",
     "value": {
       "type": "Long",
       "data": 0
@@ -70,7 +61,7 @@
   {
     "type": "GlobalVariable",
     "flags": "",
-    "id": "erndebtminimumpaymentcanpay",
+    "id": "ErnDangerousDebtminimumpaymentcanpay",
     "value": {
       "type": "Long",
       "data": 0
@@ -88,7 +79,7 @@
   {
     "type": "Script",
     "flags": "",
-    "id": "erndebt_collectorscript",
+    "id": "ErnDangerousDebt_collectorscript",
     "header": {
       "num_shorts": 0,
       "num_longs": 0,
@@ -98,19 +89,17 @@
     },
     "variables": "KLUv/QBYIQAAAAAAAA==",
     "bytecode": "KLUv/QBYIQAAAAAAAA==",
-    "text": "Begin erndebt_collectorscript\n\nShort NoLore\nShort T_Local_NoLore\nShort erndebt_collectorvar\n\nEnd erndebt_collectorscript\n"
+    "text": "Begin ErnDangerousDebt_collectorscript\n\nShort NoLore\nShort T_Local_NoLore\nShort ErnDangerousDebt_collectorvar\n\nEnd ErnDangerousDebt_collectorscript\n"
   },
   {
     "type": "Npc",
     "flags": "",
-    "id": "erndebt_bodyguard",
+    "id": "ErnDangerousDebt_bodyguard",
     "name": "Bodyguard",
     "script": "nolore",
     "mesh": "",
     "inventory": [],
-    "spells": [
-      "resist magicka_25"
-    ],
+    "spells": ["resist magicka_25"],
     "ai_data": {
       "hello": 0,
       "fight": 70,
@@ -146,44 +135,10 @@
     "data": {
       "level": 6,
       "stats": {
-        "attributes": [
-          60,
-          50,
-          40,
-          40,
-          40,
-          50,
-          30,
-          50
-        ],
+        "attributes": [60, 50, 40, 40, 40, 50, 30, 50],
         "skills": [
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          30,
-          60,
-          30,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          30
+          60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+          30, 60, 30, 60, 60, 60, 60, 60, 60, 30
         ],
         "health": 95,
         "magicka": 40,
@@ -198,9 +153,9 @@
   {
     "type": "Npc",
     "flags": "",
-    "id": "erndebt_collector",
+    "id": "ErnDangerousDebt_collector",
     "name": "Repossessor",
-    "script": "erndebt_collectorscript",
+    "script": "ErnDangerousDebt_collectorscript",
     "mesh": "",
     "inventory": [],
     "spells": [],
@@ -239,44 +194,10 @@
     "data": {
       "level": 5,
       "stats": {
-        "attributes": [
-          50,
-          50,
-          50,
-          50,
-          60,
-          50,
-          50,
-          50
-        ],
+        "attributes": [50, 50, 50, 50, 60, 50, 50, 50],
         "skills": [
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          30,
-          60,
-          30,
-          60,
-          60,
-          60,
-          60,
-          60,
-          60,
-          30
+          60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60, 60,
+          30, 60, 30, 60, 60, 60, 60, 60, 60, 30
         ],
         "health": 60,
         "magicka": 60,
@@ -474,7 +395,7 @@
         "filter_type": "Local",
         "function": "VariableCompare",
         "comparison": "Equal",
-        "id": "erndebt_collectorvar",
+        "id": "ErnDangerousDebt_collectorvar",
         "value": {
           "type": "Integer",
           "data": 0
@@ -543,7 +464,7 @@
         "filter_type": "Local",
         "function": "VariableCompare",
         "comparison": "Equal",
-        "id": "erndebt_collectorvar",
+        "id": "ErnDangerousDebt_collectorvar",
         "value": {
           "type": "Integer",
           "data": 0
@@ -583,7 +504,7 @@
         }
       }
     ],
-    "script_text": "; pay minimum\nPlayer->RemoveItem Gold_001 erndebtminimumpayment\nset ernjustpaidamount to erndebtminimumpayment\nGoodbye"
+    "script_text": "; pay minimum\nPlayer->RemoveItem Gold_001 ErnDangerousDebtminimumpayment\nset ernjustpaidamount to ErnDangerousDebtminimumpayment\nGoodbye"
   },
   {
     "type": "DialogueInfo",
@@ -612,7 +533,7 @@
         "filter_type": "Local",
         "function": "VariableCompare",
         "comparison": "Equal",
-        "id": "erndebt_collectorvar",
+        "id": "ErnDangerousDebt_collectorvar",
         "value": {
           "type": "Integer",
           "data": 0
@@ -681,7 +602,7 @@
         "filter_type": "Local",
         "function": "VariableCompare",
         "comparison": "Equal",
-        "id": "erndebt_collectorvar",
+        "id": "ErnDangerousDebt_collectorvar",
         "value": {
           "type": "Integer",
           "data": 0
@@ -761,7 +682,7 @@
         "filter_type": "Global",
         "function": "VariableCompare",
         "comparison": "Greater",
-        "id": "erndebtminimumpaymentcanpay",
+        "id": "ErnDangerousDebtminimumpaymentcanpay",
         "value": {
           "type": "Integer",
           "data": 0
@@ -783,7 +704,7 @@
         "filter_type": "Local",
         "function": "VariableCompare",
         "comparison": "Equal",
-        "id": "erndebt_collectorvar",
+        "id": "ErnDangerousDebt_collectorvar",
         "value": {
           "type": "Integer",
           "data": 0
@@ -863,7 +784,7 @@
         "filter_type": "Global",
         "function": "VariableCompare",
         "comparison": "Greater",
-        "id": "erndebtminimumpaymentcanpay",
+        "id": "ErnDangerousDebtminimumpaymentcanpay",
         "value": {
           "type": "Integer",
           "data": 0
@@ -885,7 +806,7 @@
         "filter_type": "Local",
         "function": "VariableCompare",
         "comparison": "Equal",
-        "id": "erndebt_collectorvar",
+        "id": "ErnDangerousDebt_collectorvar",
         "value": {
           "type": "Integer",
           "data": 0
@@ -947,14 +868,14 @@
     "speaker_cell": "",
     "player_faction": "",
     "sound_path": "",
-    "text": "Hello %PCName. I'm here to collect. The boss would accept %erndebtminimumpayment gold as a gesture of good faith.",
+    "text": "Hello %PCName. I'm here to collect. The boss would accept %ErnDangerousDebtminimumpayment gold as a gesture of good faith.",
     "filters": [
       {
         "index": 3,
         "filter_type": "Local",
         "function": "VariableCompare",
         "comparison": "Equal",
-        "id": "erndebt_collectorvar",
+        "id": "ErnDangerousDebt_collectorvar",
         "value": {
           "type": "Integer",
           "data": 0
@@ -1009,7 +930,7 @@
         "filter_type": "Global",
         "function": "VariableCompare",
         "comparison": "Greater",
-        "id": "erndebtminimumpaymentcanpay",
+        "id": "ErnDangerousDebtminimumpaymentcanpay",
         "value": {
           "type": "Integer",
           "data": 0
@@ -1049,14 +970,14 @@
     "speaker_cell": "",
     "player_faction": "",
     "sound_path": "",
-    "text": "Hello %PCName. I'm here to collect. The boss would accept %erndebtminimumpayment gold as a gesture of good faith. No more excuses.",
+    "text": "Hello %PCName. I'm here to collect. The boss would accept %ErnDangerousDebtminimumpayment gold as a gesture of good faith. No more excuses.",
     "filters": [
       {
         "index": 3,
         "filter_type": "Local",
         "function": "VariableCompare",
         "comparison": "Equal",
-        "id": "erndebt_collectorvar",
+        "id": "ErnDangerousDebt_collectorvar",
         "value": {
           "type": "Integer",
           "data": 0
@@ -1111,7 +1032,7 @@
         "filter_type": "Global",
         "function": "VariableCompare",
         "comparison": "Greater",
-        "id": "erndebtminimumpaymentcanpay",
+        "id": "ErnDangerousDebtminimumpaymentcanpay",
         "value": {
           "type": "Integer",
           "data": 0
@@ -1158,7 +1079,7 @@
         "filter_type": "Local",
         "function": "VariableCompare",
         "comparison": "Equal",
-        "id": "erndebt_collectorvar",
+        "id": "ErnDangerousDebt_collectorvar",
         "value": {
           "type": "Integer",
           "data": 0
@@ -1249,7 +1170,7 @@
         "filter_type": "Local",
         "function": "VariableCompare",
         "comparison": "Equal",
-        "id": "erndebt_collectorvar",
+        "id": "ErnDangerousDebt_collectorvar",
         "value": {
           "type": "Integer",
           "data": 0
@@ -1307,7 +1228,7 @@
         "filter_type": "Local",
         "function": "VariableCompare",
         "comparison": "Equal",
-        "id": "erndebt_collectorvar",
+        "id": "ErnDangerousDebt_collectorvar",
         "value": {
           "type": "Integer",
           "data": 0

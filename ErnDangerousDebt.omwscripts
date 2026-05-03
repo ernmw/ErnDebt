@@ -1,0 +1,6 @@
+MENU: scripts/ErnDangerousDebt/menu_settings.lua
+
+PLAYER: scripts/ErnDangerousDebt/player.lua
+GLOBAL: scripts/ErnDangerousDebt/global.lua
+CUSTOM: scripts/ErnDangerousDebt/debtcollector.lua
+CUSTOM: scripts/ErnDangerousDebt/bodyguard.lua

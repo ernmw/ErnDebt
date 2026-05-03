@@ -1,5 +1,5 @@
 --[[
-ErnDebt for OpenMW.
+ErnDangerousDebt for OpenMW.
 Copyright (C) Erin Pentecost 2026
 
 This program is free software: you can redistribute it and/or modify
@@ -19,12 +19,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 -- This file is in charge of tracking and exposing path information.
 -- Interact with it via the interface it exposes.
 
-local MOD_NAME        = require("scripts.ErnDebt.ns")
+local MOD_NAME        = require("scripts.ErnDangerousDebt.ns")
 local core            = require('openmw.core')
 local pself           = require("openmw.self")
 local nearby          = require("openmw.nearby")
-local settings        = require("scripts.ErnDebt.settings")
-local mwjournal       = require("scripts.ErnDebt.mwjournal")
+local settings        = require("scripts.ErnDangerousDebt.settings")
+local mwjournal       = require("scripts.ErnDangerousDebt.mwjournal")
 local interfaces      = require("openmw.interfaces")
 local ui              = require('openmw.ui')
 local util            = require('openmw.util')
