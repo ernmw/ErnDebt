@@ -25,6 +25,28 @@ local aux_util       = require('openmw_aux.util')
 
 local collectionData = {}
 
+local function expired()
+    local now = core.getGameTime()
+    local elapsed = now - (collectionData.spawnTime or now)
+    local fiveHours = 5 * 60 * 60
+    return elapsed >= fiveHours
+end
+
+local function cleanup()
+    core.sendGlobalEvent(MOD_NAME .. "onCollectorDespawn", {
+        player = collectionData.player,
+        npc = pself,
+        dead = pself.type.isDead(pself)
+    })
+    for _, guard in ipairs(collectionData.guards or {}) do
+        core.sendGlobalEvent(MOD_NAME .. "onBodyguardDespawn", {
+            player = collectionData.player,
+            npc = guard,
+            dead = guard.type.isDead(guard)
+        })
+    end
+end
+
 local function onInit(initData)
     print("Debt collector " .. pself.recordId .. " initialized.")
     if initData ~= nil then
@@ -64,27 +86,28 @@ local function onActive()
         -- Remove AI so we have full control
         interfaces.AI.removePackages()
     end
-end
 
-local function onInactive()
-    -- don't despawn if dialogue or combat haven't occured or if it's been less than 5 hours.
-    local longTime = collectionData.spawnTime + (5 * 60 * 60) < core.getGameTime()
-    if (not longTime) and (not collectionData.dialogueStarted) and (not collectionData.combatStarted) then
+    -- check if we stick around
+    if not expired()
+        and not collectionData.dialogueStarted
+        and not collectionData.combatStarted
+    then
         return
     end
 
-    core.sendGlobalEvent(MOD_NAME .. "onCollectorDespawn", {
-        player = collectionData.player,
-        npc = pself,
-        dead = pself.type.isDead(pself)
-    })
-    for _, guard in ipairs(collectionData.guards) do
-        core.sendGlobalEvent(MOD_NAME .. "onBodyguardDespawn", {
-            player = collectionData.player,
-            npc = guard,
-            dead = guard.type.isDead(guard)
-        })
+    cleanup()
+end
+
+local function onInactive()
+    -- check if we stick around
+    if not expired()
+        and not collectionData.dialogueStarted
+        and not collectionData.combatStarted
+    then
+        return
     end
+
+    cleanup()
 end
 
 local function onEquip(data)

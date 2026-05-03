@@ -37,7 +37,6 @@ local spawnDist       = 600
 
 local persist         = {
     justWarned = false,
-    justSpawned = false,
     currentDebt = settings.main.startDebt,
     currentPaymentSkipStreak = 0,
     collectorsKilled = 0,
@@ -83,6 +82,7 @@ local function spawn(cell, position)
         collectorsKilled = persist.collectorsKilled,
         playerGold = currentGoldAmt,
         minPayment = minPayment,
+        spawnTime = persist.lastSpawnTime,
     })
 end
 
@@ -92,9 +92,6 @@ local function shouldSpawn()
         return false
     end
     if persist.currentDebt <= 0 then
-        return false
-    end
-    if persist.justSpawned then
         return false
     end
 
@@ -140,7 +137,6 @@ local function onCollectorDespawn(data)
         quest:addJournalEntry(5, pself)
     end
 
-    persist.justSpawned = false
     if data.dead then
         settings.debugPrint("Collector killed.")
         persist.collectorsKilled = persist.collectorsKilled + 1
