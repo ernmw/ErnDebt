@@ -7,6 +7,9 @@ debugName: "Debug Mode"
 interestName: "Interest"
 interestDescription: "Interest rate, per in-game week. .01 is 1%."
 
+startDebtName: "Starting Debt"
+startDebtDescription: "Debt you'll start the game with."
+
 beingWatchedMessage: "You feel as though you're being watched."
 
 collectorSpawnedMessage: "You owe {currentDebt} gold, and must pay at least {minPayment}."

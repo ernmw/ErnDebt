@@ -39,6 +39,17 @@ local function init()
         permanentStorage = true,
         settings = {
             {
+                key = "startDebt",
+                name = "startDebtName",
+                description = "startDebtDescription",
+                default = 50000,
+                renderer = "number",
+                argument = {
+                    integer = true,
+                    min = 0,
+                }
+            },
+            {
                 key = "interest",
                 name = "interestName",
                 description = "interestDescription",
