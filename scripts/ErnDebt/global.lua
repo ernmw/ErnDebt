@@ -87,10 +87,12 @@ local function onCollectorDespawn(data)
         data.npc.enabled = false
         data.npc:remove()
     end
-    -- pass through if we paid some debt. mwscript must set this value.
-    data.justPaidAmount = world.mwscript.getGlobalVariables(data.player)[mwvars.ernjustpaidamount]
-    data.player:sendEvent(MOD_NAME .. "onCollectorDespawn", data)
-    world.mwscript.getGlobalVariables(data.player)[mwvars.ernjustpaidamount] = 0
+    if not data.expired then
+        -- pass through if we paid some debt. mwscript must set this value.
+        data.justPaidAmount = world.mwscript.getGlobalVariables(data.player)[mwvars.ernjustpaidamount]
+        data.player:sendEvent(MOD_NAME .. "onCollectorDespawn", data)
+        world.mwscript.getGlobalVariables(data.player)[mwvars.ernjustpaidamount] = 0
+    end
 end
 
 local function onBodyguardDespawn(data)

@@ -19,7 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 local MOD_NAME       = require("scripts.ErnDebt.ns")
 local interfaces     = require("openmw.interfaces")
 local pself          = require("openmw.self")
-local util           = require('openmw.util')
 local core           = require('openmw.core')
 local aux_util       = require('openmw_aux.util')
 
@@ -32,11 +31,12 @@ local function expired()
     return elapsed >= fiveHours
 end
 
-local function cleanup()
+local function cleanup(didExpire)
     core.sendGlobalEvent(MOD_NAME .. "onCollectorDespawn", {
         player = collectionData.player,
         npc = pself,
-        dead = pself.type.isDead(pself)
+        dead = pself.type.isDead(pself),
+        expired = didExpire or false
     })
     for _, guard in ipairs(collectionData.guards or {}) do
         core.sendGlobalEvent(MOD_NAME .. "onBodyguardDespawn", {
@@ -88,14 +88,9 @@ local function onActive()
     end
 
     -- check if we stick around
-    if not expired()
-        and not collectionData.dialogueStarted
-        and not collectionData.combatStarted
-    then
-        return
+    if expired() then
+        cleanup(true)
     end
-
-    cleanup()
 end
 
 local function onInactive()

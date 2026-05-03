@@ -24,7 +24,6 @@ local core            = require('openmw.core')
 local pself           = require("openmw.self")
 local nearby          = require("openmw.nearby")
 local settings        = require("scripts.ErnDebt.settings")
-local async           = require("openmw.async")
 local mwjournal       = require("scripts.ErnDebt.mwjournal")
 local interfaces      = require("openmw.interfaces")
 local ui              = require('openmw.ui')
@@ -47,6 +46,12 @@ local persist         = {
 }
 
 local oneWeekDuration = 604800
+
+local function minimumTimePassed()
+    local duration = settings.main.debug and 100 or oneWeekDuration
+
+    return persist.lastSpawnTime + duration < core.getGameTime()
+end
 
 local function currentGold()
     return pself.type.inventory(pself):countOf("gold_001")
@@ -89,15 +94,19 @@ end
 local function shouldSpawn()
     settings.debugPrint("shouldSpawn()")
     if not persist.enabled then
+        settings.debugPrint("shouldSpawn() - not enabled")
         return false
     end
     if persist.currentDebt <= 0 then
+        settings.debugPrint("shouldSpawn() - no debt")
         return false
     end
 
-    if (not settings.main.debug) and persist.lastSpawnTime + oneWeekDuration > core.getGameTime() then
+    if not minimumTimePassed() then
+        settings.debugPrint("shouldSpawn() - minimum time hasn't passed")
         return false
     end
+
     -- chance to not spawn the collector goes down the more you skip payments.
     local daysLate = math.ceil((core.getGameTime() - persist.lastSpawnTime - oneWeekDuration) / (24 * 60 * 60))
     local chance = math.max(5,

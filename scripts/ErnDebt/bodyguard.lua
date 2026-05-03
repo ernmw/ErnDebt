@@ -19,9 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 local MOD_NAME   = require("scripts.ErnDebt.ns")
 local interfaces = require("openmw.interfaces")
 local pself      = require("openmw.self")
-local util       = require('openmw.util')
-local core       = require('openmw.core')
-local aux_util   = require('openmw_aux.util')
 
 local guardData  = {}
 
