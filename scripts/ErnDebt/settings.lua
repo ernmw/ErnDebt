@@ -1,5 +1,5 @@
 --[[
-ErnDangerousDebt for OpenMW.
+ErnDebt for OpenMW.
 Copyright (C) 2026 Erin Pentecost
 
 This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 ]]
 local interfaces   = require("openmw.interfaces")
 local storage      = require("openmw.storage")
-local MOD_NAME     = require("scripts.ErnDangerousDebt.ns")
+local MOD_NAME     = require("scripts.ErnDebt.ns")
 local util         = require('openmw.util')
 local async        = require("openmw.async")
 

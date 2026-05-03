@@ -1,5 +1,5 @@
 --[[
-ErnDangerousDebt for OpenMW.
+ErnDebt for OpenMW.
 Copyright (C) Erin Pentecost 2026
 
 This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 local types        = require('openmw.types')
 local aux_util     = require('openmw_aux.util')
 local world        = require("openmw.world")
-local MOD_NAME     = require("scripts.ErnDangerousDebt.ns")
+local MOD_NAME     = require("scripts.ErnDebt.ns")
 local SLOT         = types.Actor.EQUIPMENT_SLOT
 
 -- https://en.uesp.net/wiki/Tamriel_Data:Armor
